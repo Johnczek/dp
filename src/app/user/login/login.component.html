@@ -1,16 +1,42 @@
 <div class="row my-4">
   <div class="col-lg-4 col-md-8 col-12 mx-auto">
-    <form>
+    <form [formGroup]="loginForm" (ngSubmit)="onLoginFormSubmit()">
       <h1 class="h3 mb-4 font-weight-normal">Přihlášení</h1>
 
       <div class="form-floating mb-2">
-        <input type="email" class="form-control" id="login-email" placeholder="Emailová adresa">
+        <input type="email"
+               class="form-control"
+               id="login-email"
+               placeholder="Emailová adresa"
+               formControlName="email"
+               [class.is-invalid]="loginForm.get('email').touched && loginForm.get('email').errors"
+               [class.is-valid]="loginForm.get('email').touched && !loginForm.get('email').errors"
+        >
         <label for="login-email">Emailová adresa</label>
+        <div class="invalid-feedback"
+             *ngIf="loginForm.get('email').touched && loginForm.get('email').hasError('email')">
+          Email není zadán ve správném tvaru
+        </div>
+        <div class="invalid-feedback"
+             *ngIf="loginForm.get('email').touched && loginForm.get('email').hasError('required')">
+            Toto pole je povinné
+        </div>
       </div>
 
       <div class="form-floating mb-2">
-        <input type="password" class="form-control" id="login-password" placeholder="Heslo">
+        <input type="password"
+               class="form-control"
+               id="login-password"
+               placeholder="Heslo"
+               formControlName="password"
+               [class.is-invalid]="loginForm.get('password').touched && loginForm.get('password').errors"
+               [class.is-valid]="loginForm.get('password').touched && !loginForm.get('password').errors"
+        >
         <label for="login-password">Heslo</label>
+        <div class="invalid-feedback"
+             *ngIf="loginForm.get('password').touched && loginForm.get('password').hasError('required')">
+          Toto pole je povinné
+        </div>
       </div>
 
       <div class="form-check mb-3">
@@ -19,8 +45,12 @@
           Zapamatujte si mě
         </label>
       </div>
-      <button class="btn btn-lg btn-primary btn-block w-100" type="submit">Přihlásit se</button>
-      <div class="text-center d-block mt-3"><a href="">Ještě nemáte účet?</a></div>
+      <button class="btn btn-lg btn-primary btn-block w-100"
+              type="submit"
+              [disabled]="!loginForm.valid">
+        Přihlásit se
+      </button>
+      <div class="text-center d-block mt-3"><a routerLink="/register">Ještě nemáte účet?</a></div>
     </form>
   </div>
 </div>

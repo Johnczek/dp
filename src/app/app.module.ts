@@ -1,12 +1,15 @@
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
 
-import { AppComponent } from './app.component';
-import { HeaderComponent } from './common/header/header.component';
-import { FooterComponent } from './common/footer/footer.component';
+import {AppComponent} from './app.component';
+import {HeaderComponent} from './common/header/header.component';
+import {FooterComponent} from './common/footer/footer.component';
 import {AppRoutingModule} from './app-routing.module';
-import { LoginComponent } from './user/login/login.component';
-import { HomepageComponent } from './homepage/homepage.component';
+import {LoginComponent} from './user/login/login.component';
+import {HomepageComponent} from './homepage/homepage.component';
+import {ReactiveFormsModule} from '@angular/forms';
+import {HttpClientModule} from '@angular/common/http';
+import { RegisterComponent } from './user/register/register.component';
 
 @NgModule({
   declarations: [
@@ -14,11 +17,14 @@ import { HomepageComponent } from './homepage/homepage.component';
     HeaderComponent,
     FooterComponent,
     LoginComponent,
-    HomepageComponent
+    HomepageComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    ReactiveFormsModule,
+    AppRoutingModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

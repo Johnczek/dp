@@ -1,0 +1,122 @@
+<div class="row my-4">
+  <div class="col-lg-6 col-md-8 col-12 mx-auto">
+    <form [formGroup]="registerForm" (ngSubmit)="onRegisterFormSubmit()">
+      <h1 class="h3 mb-4 font-weight-normal">Registrace</h1>
+      <p>Založte si účet, pomocí kterého budete moci jednoduše nakupovat i prodávat na naší platformě.</p>
+
+      <div class="form-floating mb-2">
+        <input type="text"
+               class="form-control"
+               id="register-firstname"
+               placeholder="Křestní jméno"
+               formControlName="firstName"
+               required="required"
+               [class.is-invalid]="registerForm.get('firstName').touched && registerForm.get('firstName').errors"
+               [class.is-valid]="registerForm.get('firstName').touched && !registerForm.get('firstName').errors"
+        >
+        <label for="register-firstname">Křestní jméno</label>
+        <div class="invalid-feedback"
+             *ngIf="registerForm.get('firstName').touched && registerForm.get('firstName').hasError('required')">
+          Toto pole je povinné
+        </div>
+      </div>
+
+      <div class="form-floating mb-2">
+        <input type="text"
+               class="form-control"
+               id="register-lastname"
+               placeholder="Příjmení"
+               formControlName="lastName"
+               required="required"
+               [class.is-invalid]="registerForm.get('lastName').touched && registerForm.get('lastName').errors"
+               [class.is-valid]="registerForm.get('lastName').touched && !registerForm.get('lastName').errors"
+        >
+        <label for="register-firstname">Příjmení</label>
+        <div class="invalid-feedback"
+             *ngIf="registerForm.get('firstName').touched && registerForm.get('lastName').hasError('required')">
+          Toto pole je povinné
+        </div>
+      </div>
+
+      <div class="form-floating mb-2">
+        <input type="email"
+               class="form-control"
+               id="register-email"
+               placeholder="Emailová adresa"
+               formControlName="email"
+               required="required"
+               [class.is-invalid]="registerForm.get('email').touched && registerForm.get('email').errors"
+               [class.is-valid]="registerForm.get('email').touched && !registerForm.get('email').errors"
+        >
+        <label for="register-email">Emailová adresa</label>
+        <div class="invalid-feedback"
+             *ngIf="registerForm.get('email').touched && registerForm.get('email').hasError('email')">
+          Email není zadán ve správném tvaru
+        </div>
+        <div class="invalid-feedback"
+             *ngIf="registerForm.get('email').touched && registerForm.get('email').hasError('required')">
+          Toto pole je povinné
+        </div>
+      </div>
+
+      <div class="form-floating mb-2">
+        <input type="password"
+               class="form-control"
+               id="login-password"
+               placeholder="Heslo"
+               formControlName="password"
+               required="required"
+               [class.is-invalid]="registerForm.get('password').touched && registerForm.get('password').errors"
+               [class.is-valid]="registerForm.get('password').touched && !registerForm.get('password').errors"
+        >
+        <label for="login-password">Heslo</label>
+        <div class="invalid-feedback"
+             *ngIf="registerForm.get('password').touched && registerForm.get('password').hasError('required')">
+          Toto pole je povinné
+        </div>
+        <div class="invalid-feedback"
+             *ngIf="registerForm.get('password').touched && registerForm.get('password').hasError('minlength')">
+          Minimální požadovaná délka hesla je {{passwordMinLength}}
+        </div>
+      </div>
+
+      <div class="form-floating mb-2">
+        <input type="password"
+               class="form-control"
+               id="login-password-repeat"
+               placeholder="Heslo znovu"
+               formControlName="passwordRepeat"
+               required="required"
+               [class.is-invalid]="registerForm.get('passwordRepeat').touched && registerForm.errors?.passwordMismatch"
+               [class.is-valid]="registerForm.get('passwordRepeat').touched && !registerForm.errors?.passwordMismatch"
+        >
+        <label for="login-password-repeat">Heslo znovu</label>
+        <div class="invalid-feedback"
+             *ngIf="registerForm.get('passwordRepeat').touched && registerForm.get('passwordRepeat').hasError('required')">
+          Toto pole je povinné
+        </div>
+        <div class="invalid-feedback"
+             *ngIf="registerForm.get('passwordRepeat').touched && registerForm.errors?.passwordMismatch">
+          Hesla se neshodují
+        </div>
+      </div>
+
+      <div class="form-floating mb-2">
+        <textarea class="form-control h-auto"
+                  placeholder="Napište něco o sobě"
+                  id="floatingTextarea"
+                  formControlName="description"
+                  rows="4"></textarea>
+        <label for="floatingTextarea">Napište něco o sobě</label>
+      </div>
+
+      <button class="btn btn-lg btn-primary btn-block w-100"
+              type="submit"
+              [disabled]="!registerForm.valid">
+        Registrovat se
+      </button>
+      <small>Pole označená <span class="text-info">tyrkysovým okrajem</span> jsou povinná.</small>
+      <div class="text-center d-block mt-3"><a routerLink="/login">Už u nás máte účet?</a></div>
+    </form>
+  </div>
+</div>
