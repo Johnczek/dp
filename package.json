@@ -2,9 +2,10 @@
   "name": "dp",
   "version": "0.0.0",
   "scripts": {
+    "ng-openapi-gen": "ng-openapi-gen",
     "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
+    "start": "npm run ng-openapi-gen && npm run ng -- serve",
+    "build": "npm run ng-openapi-gen && npm run ng -- build -prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

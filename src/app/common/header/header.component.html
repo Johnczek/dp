@@ -1,23 +1,36 @@
-<header class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
-  <p class="h5 my-0 me-md-auto fw-normal">Auctioner</p>
-  <nav class="my-2 my-md-0 me-md-3">
-    <a class="p-2 text-dark" href="#">Features</a>
-    <a class="p-2 text-dark" href="#">Enterprise</a>
-    <a class="p-2 text-dark" href="#">Support</a>
-    <a class="p-2 text-dark" href="#">Pricing</a>
-  </nav>
-  <a class="btn btn-outline-primary me-2" href="#">Přihlásit se</a>
-  <a class="btn btn-outline-primary" href="#">Registrovat se</a>
+<header class="d-flex flex-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+  <div class="d-flex align-items-baseline me-auto">
+    <a class="h4 my-0 fw-normal text-dark text-decoration-none" routerLink="">Auctioner</a>
+    <nav class="ms-md-3 ms-1 d-flex">
+      <a class="px-2 nav-link" href="#">Aukce</a>
+    </nav>
+  </div>
 
-  <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-      Dropdown
-    </a>
-    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-      <li><a class="dropdown-item" href="#">Action</a></li>
-      <li><a class="dropdown-item" href="#">Another action</a></li>
-      <li><hr class="dropdown-divider"></li>
-      <li><a class="dropdown-item" href="#">Something else here</a></li>
-    </ul>
-  </li>
+  <a class="btn btn-sm btn-outline-primary me-2" routerLink="/login">Přihlášení</a>
+  <a class="btn btn-sm btn-success d-none d-sm-block" href="#">Registrace</a>
+  <ul class="list-unstyled m-0">
+    <li class="nav-item dropdown list-unstyled">
+      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+         aria-expanded="false">
+        <img src="https://dummyimage.com/100x100/3c7814/fff&text=JP" alt="" class="rounded-circle img-fluid header-avatar">
+      </a>
+      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <li class="dropdown-item-text">
+          <div>Jméno příjmení</div>
+          <small class="text-muted">email@email.com</small>
+        </li>
+        <li>
+          <hr class="dropdown-divider">
+        </li>
+        <li><a class="dropdown-item" href="#">Můj košík</a></li>
+        <li><a class="dropdown-item" href="#">Můj profil</a></li>
+        <li><a class="dropdown-item" href="#">Mé objednávky</a></li>
+        <li>
+          <hr class="dropdown-divider">
+        </li>
+        <li><a class="dropdown-item" href="#">Odhlásit se</a></li>
+      </ul>
+    </li>
+  </ul>
 </header>
+
