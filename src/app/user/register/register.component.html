@@ -31,7 +31,7 @@
                [class.is-invalid]="registerForm.get('lastName').touched && registerForm.get('lastName').errors"
                [class.is-valid]="registerForm.get('lastName').touched && !registerForm.get('lastName').errors"
         >
-        <label for="register-firstname">Příjmení</label>
+        <label for="register-lastname">Příjmení</label>
         <div class="invalid-feedback"
              *ngIf="registerForm.get('firstName').touched && registerForm.get('lastName').hasError('required')">
           Toto pole je povinné
@@ -112,7 +112,7 @@
 
       <button class="btn btn-lg btn-primary btn-block w-100"
               type="submit"
-              [disabled]="!registerForm.valid">
+              [disabled]="!registerForm.valid || !registerForm.touched || registerFormSubmitting">
         Registrovat se
       </button>
       <small class="text-muted">Pole označená <span class="text-info">tyrkysovým okrajem</span> jsou povinná.</small>

@@ -60,14 +60,34 @@
       <div class="form-floating mb-2">
         <input type="text"
                class="form-control"
-               id="register-firstname"
+               id="user-change-id"
+               placeholder="Id"
+               formControlName="id"
+               disabled>
+        <label for="user-change-id">ID</label>
+      </div>
+
+      <div class="form-floating mb-2">
+        <input type="text"
+               class="form-control"
+               id="user-change-email"
+               placeholder="Email"
+               formControlName="email"
+               disabled>
+        <label for="user-change-email">Email</label>
+      </div>
+
+      <div class="form-floating mb-2">
+        <input type="text"
+               class="form-control"
+               id="user-change-firstname"
                placeholder="Křestní jméno"
                formControlName="firstName"
                required="required"
                [class.is-invalid]="userEditForm.get('firstName').touched && userEditForm.get('firstName').errors"
                [class.is-valid]="userEditForm.get('firstName').touched && !userEditForm.get('firstName').errors"
         >
-        <label for="register-firstname">Křestní jméno</label>
+        <label for="user-change-firstname">Křestní jméno</label>
         <div class="invalid-feedback"
              *ngIf="userEditForm.get('firstName').touched && userEditForm.get('firstName').hasError('required')">
           Toto pole je povinné
@@ -77,14 +97,14 @@
       <div class="form-floating mb-2">
         <input type="text"
                class="form-control"
-               id="register-lastname"
+               id="user-change-lastname"
                placeholder="Příjmení"
                formControlName="lastName"
                required="required"
                [class.is-invalid]="userEditForm.get('lastName').touched && userEditForm.get('lastName').errors"
                [class.is-valid]="userEditForm.get('lastName').touched && !userEditForm.get('lastName').errors"
         >
-        <label for="register-firstname">Příjmení</label>
+        <label for="user-change-lastname">Příjmení</label>
         <div class="invalid-feedback"
              *ngIf="userEditForm.get('firstName').touched && userEditForm.get('lastName').hasError('required')">
           Toto pole je povinné

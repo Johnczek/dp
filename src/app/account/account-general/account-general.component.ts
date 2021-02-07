@@ -75,6 +75,8 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
   private initUserEditForm(): void {
 
     this.userEditForm = new FormGroup({
+      id: new FormControl(this.loggedUser.id),
+      email: new FormControl(this.loggedUser.email),
       firstName: new FormControl(this.loggedUser.firstName, [Validators.required]),
       lastName: new FormControl(this.loggedUser.lastName, [Validators.required]),
       description: new FormControl(this.loggedUser.description)

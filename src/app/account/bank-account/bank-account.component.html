@@ -1,1 +1,102 @@
-<p>bank-account works!</p>
+<div class="row">
+  <div class="col-12">
+    <h4 class="mb-3">Bankovní účty</h4>
+  </div>
+
+  <div class="col-12">
+    <div class="table-responsive" *ngIf="bankAccounts && bankAccounts.length > 0; else noAccounts">
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Předčíslí</th>
+          <th scope="col">Číslo účtu</th>
+          <th scope="col">kód banky</th>
+          <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let bankAccount of bankAccounts">
+          <th scope="row">{{bankAccount.id}}</th>
+          <th>{{bankAccount.prefix}}</th>
+          <th>{{bankAccount.number}}</th>
+          <th>{{bankAccount.bankCode}}</th>
+          <th>
+            <span class="btn p-0" (click)="deleteBankAccount(bankAccount.id)" title="Odstranit účet">
+              <i class="bi bi-trash text-danger"></i>
+            </span>
+          </th>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <ng-template #noAccounts>K účtu nebyly nalezeny žádné bankovní účty.</ng-template>
+</div>
+
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="btn btn-primary" (click)="showAddForm()" id="bank-account-add-toggle">
+      Přidat bankovní účet
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4 d-none" id="bank-account-add-form">
+  <form [formGroup]="bankAccountAddForm" (ngSubmit)="onBankAccountAddFormSubmit()">
+    <h5 class="mb-3">Založení nového bankovního účtu</h5>
+
+    <div class="form-floating mb-2">
+      <input type="number"
+             class="form-control"
+             id="bank-account-add-prefix"
+             placeholder="Předčíslí účtu"
+             formControlName="prefix"
+             [class.is-invalid]="bankAccountAddForm.get('prefix').touched && bankAccountAddForm.get('prefix').errors"
+             [class.is-valid]="bankAccountAddForm.get('prefix').touched && !bankAccountAddForm.get('prefix').errors"
+      >
+      <label for="bank-account-add-prefix">Předčíslí účtu</label>
+    </div>
+
+    <div class="form-floating mb-2">
+      <input type="number"
+             class="form-control"
+             id="bank-account-add-number"
+             placeholder="Číslo účtu"
+             formControlName="number"
+             required="required"
+             [class.is-invalid]="bankAccountAddForm.get('number').touched && bankAccountAddForm.get('number').errors"
+             [class.is-valid]="bankAccountAddForm.get('number').touched && !bankAccountAddForm.get('number').errors"
+      >
+      <label for="bank-account-add-number">Číslo účtu</label>
+      <div class="invalid-feedback"
+           *ngIf="bankAccountAddForm.get('number').touched && bankAccountAddForm.get('number').hasError('required')">
+        Toto pole je povinné
+      </div>
+    </div>
+
+    <div class="form-floating mb-2">
+      <input type="number"
+             class="form-control"
+             id="bank-account-add-bank-code"
+             placeholder="Kód banky"
+             formControlName="bankCode"
+             required="required"
+             [class.is-invalid]="bankAccountAddForm.get('bankCode').touched && bankAccountAddForm.get('bankCode').errors"
+             [class.is-valid]="bankAccountAddForm.get('bankCode').touched && !bankAccountAddForm.get('bankCode').errors"
+      >
+      <label for="bank-account-add-bank-code">Kód banky</label>
+      <div class="invalid-feedback"
+           *ngIf="bankAccountAddForm.get('bankCode').touched && bankAccountAddForm.get('bankCode').hasError('required')">
+        Toto pole je povinné
+      </div>
+    </div>
+
+    <button class="btn btn-lg btn-primary btn-block w-100"
+            type="submit"
+            [disabled]="!bankAccountAddForm.valid || !bankAccountAddForm.touched || bankAccountAddFormSubmitting">
+      Přidat nový účet
+    </button>
+    <small class="text-muted">Pole označená <span class="text-info">tyrkysovým okrajem</span> jsou povinná.</small>
+  </form>
+</div>

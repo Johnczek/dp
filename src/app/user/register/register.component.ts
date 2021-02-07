@@ -69,6 +69,7 @@ export class RegisterComponent implements OnInit, OnDestroy {
       });
   }
 
+  // TODO move into custom validator class
   private passwordsMatching(c: AbstractControl): { passwordMismatch: boolean } {
     if (c.get('password').value !== c.get('passwordRepeat').value) {
       return {passwordMismatch: true};

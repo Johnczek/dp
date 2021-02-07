@@ -1,1 +1,111 @@
-<p>address works!</p>
+<div class="row">
+  <div class="col-12">
+    <h4 class="mb-3">Adresy</h4>
+  </div>
+
+  <div class="col-12">
+    <div class="table-responsive" *ngIf="addresses && addresses.length > 0; else noAddresses">
+      <table class="table table-hover">
+        <thead>
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Město</th>
+          <th scope="col">Ulice</th>
+          <th scope="col">Číslo popisné</th>
+          <th scope="col">PSČ</th>
+          <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let address of addresses">
+          <th scope="row">{{address.id}}</th>
+          <th>{{address.city}}</th>
+          <th>{{address.street}}</th>
+          <th>{{address.streetNumber}}</th>
+          <th>{{address.zipCode}}</th>
+          <th>
+            <span class="btn p-0" (click)="deleteAddress(address.id)" title="Odstranit adresu">
+              <i class="bi bi-trash text-danger"></i>
+            </span>
+          </th>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <ng-template #noAddresses>K účtu nebyly nalezeny žádné adresy.</ng-template>
+</div>
+
+<div class="row mt-4">
+  <div class="col-12">
+    <div class="btn btn-primary" (click)="showAddForm()" id="address-add-toggle">
+      Přidat adresu
+    </div>
+  </div>
+</div>
+
+<div class="row mt-4 d-none" id="address-add-form">
+  <form [formGroup]="addressAddForm" (ngSubmit)="onAddressAddSubmit()">
+    <h5 class="mb-3">Založení nové adresy</h5>
+
+    <div class="form-floating mb-2">
+      <input type="text"
+             class="form-control"
+             id="address-add-city"
+             placeholder="Město"
+             formControlName="city"
+             required="required"
+             [class.is-invalid]="addressAddForm.get('city').touched && addressAddForm.get('city').errors"
+             [class.is-valid]="addressAddForm.get('city').touched && !addressAddForm.get('city').errors"
+      >
+      <label for="address-add-city">Město</label>
+      <div class="invalid-feedback"
+           *ngIf="addressAddForm.get('city').touched && addressAddForm.get('city').hasError('required')">
+        Toto pole je povinné
+      </div>
+    </div>
+
+    <div class="form-floating mb-2">
+      <input type="text"
+             class="form-control"
+             id="address-add-street"
+             placeholder="Ulice"
+             formControlName="street"
+             [class.is-invalid]="addressAddForm.get('street').touched && addressAddForm.get('street').errors"
+             [class.is-valid]="addressAddForm.get('street').touched && !addressAddForm.get('street').errors"
+      >
+      <label for="address-add-street">Ulice</label>
+    </div>
+
+    <div class="form-floating mb-2">
+      <input type="text"
+             class="form-control"
+             id="address-add-street-number"
+             placeholder="Číslo popisné"
+             formControlName="streetNumber"
+             [class.is-invalid]="addressAddForm.get('streetNumber').touched && addressAddForm.get('streetNumber').errors"
+             [class.is-valid]="addressAddForm.get('streetNumber').touched && !addressAddForm.get('streetNumber').errors"
+      >
+      <label for="address-add-street-number">Číslo popisné</label>
+    </div>
+
+    <div class="form-floating mb-2">
+      <input type="text"
+             class="form-control"
+             id="address-add-zip-code"
+             placeholder="PSČ"
+             formControlName="zipCode"
+             [class.is-invalid]="addressAddForm.get('zipCode').touched && addressAddForm.get('zipCode').errors"
+             [class.is-valid]="addressAddForm.get('zipCode').touched && !addressAddForm.get('zipCode').errors"
+      >
+      <label for="address-add-zip-code">PSČ</label>
+    </div>
+
+    <button class="btn btn-lg btn-primary btn-block w-100"
+            type="submit"
+            [disabled]="!addressAddForm.valid || !addressAddForm.touched || addressAddFormSubmitting">
+      Přidat novou adresu
+    </button>
+    <small class="text-muted">Pole označená <span class="text-info">tyrkysovým okrajem</span> jsou povinná.</small>
+  </form>
+</div>
