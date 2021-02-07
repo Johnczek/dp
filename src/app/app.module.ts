@@ -9,7 +9,13 @@ import {LoginComponent} from './user/login/login.component';
 import {HomepageComponent} from './homepage/homepage.component';
 import {ReactiveFormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
-import { RegisterComponent } from './user/register/register.component';
+import {RegisterComponent} from './user/register/register.component';
+import {UserProfileComponent} from './user/user-profile/user-profile.component';
+import {AccountComponent} from './account/account.component';
+import {ChangePasswordComponent} from './account/change-password/change-password.component';
+import {BankAccountComponent} from './account/bank-account/bank-account.component';
+import {AddressComponent} from './account/address/address.component';
+import { AccountGeneralComponent } from './account/account-general/account-general.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +24,13 @@ import { RegisterComponent } from './user/register/register.component';
     FooterComponent,
     LoginComponent,
     HomepageComponent,
-    RegisterComponent
+    RegisterComponent,
+    UserProfileComponent,
+    AccountComponent,
+    ChangePasswordComponent,
+    BankAccountComponent,
+    AddressComponent,
+    AccountGeneralComponent
   ],
   imports: [
     BrowserModule,

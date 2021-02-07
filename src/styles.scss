@@ -4,3 +4,27 @@
 input:required, textarea:required, select:required {
   border-color: $info;
 }
+
+
+.list-group {
+  .list-group-item {
+
+    @extend .p-0;
+
+    a {
+      @extend .d-block;
+      @extend .text-decoration-none;
+      @extend .text-dark;
+      padding: 0.5rem 1rem;
+
+      &:hover {
+        background-color:rgba(0, 0, 0, 0.1);
+      }
+
+      &.active {
+        background: $primary;
+        color: $white !important;
+      }
+    }
+  }
+}

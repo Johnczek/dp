@@ -1,0 +1,38 @@
+<div class="row">
+  <div class="col-4 pe-4" id="account-menu">
+    <div class="account-menu-box mb-4">
+      <h4 class="mb-3">Nastavení účtu</h4>
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a class="text-dark text-decoration-none"
+             routerLink="/account"
+             routerLinkActive="active"
+             [routerLinkActiveOptions]="{exact: true}">Obecné nastavení</a></li>
+        <li class="list-group-item"><a routerLink="/account/password" routerLinkActive="active">Změna hesla</a>
+        </li>
+        <li class="list-group-item"><a routerLink="/account/bank-account" routerLinkActive="active">Bankovní
+          účty</a></li>
+        <li class="list-group-item"><a routerLink="/account/address" routerLinkActive="active">Adresy</a>
+        </li>
+      </ul>
+    </div>
+    <div class="account-menu-box mb-4">
+      <h4 class="mb-3">Můj prodej</h4>
+      <ul class="list-group">
+        <li class="list-group-item"><a routerLink="/offer-item" routerLinkActive="active">Vystavit předmět</a></li>
+        <li class="list-group-item"><a routerLink="/my-auctions" routerLinkActive="active">Moje aukce</a></li>
+      </ul>
+    </div>
+    <div class="account-menu-box mb-4">
+      <h4 class="mb-3">Mé nákupy</h4>
+      <ul class="list-group">
+        <li class="list-group-item"><a routerLink="/basket" routerLinkActive="active">Košík</a></li>
+        <li class="list-group-item"><a routerLink="/orders" routerLinkActive="active">Mé objednávky</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="col-8 ps-4" id="account-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -1,0 +1,111 @@
+<div class="row">
+  <div class="col-12">
+    <h4 class="mb-3">Obecné údaje</h4>
+  </div>
+
+  <div class="col-12 mt-4">
+    <div class="avatar d-flex justify-content-center">
+      <img class="rounded-circle img-fluid" src="https://dummyimage.com/100x100/3c7814/fff&text=JP" alt="User avatar">
+    </div>
+
+    <div class="row">
+      <div class="col-8 mx-auto">
+        <form [formGroup]="avatarChangeForm" (ngSubmit)="onAvatarChangeSubmit()">
+          <div class="input-group mt-4">
+            <input type="file"
+                   class="form-control"
+                   id="user-change-avatar"
+                   aria-describedby="user-change-avatar-button"
+                   aria-label="Upload"
+                   formControlName="avatar"
+                   (change)="validateAvatar($event)"
+                   required="required"
+                   [class.is-invalid]="avatarChangeForm.get('avatar').touched && avatarChangeForm.get('avatar').errors"
+                   [class.is-valid]="avatarChangeForm.get('avatar').touched && !avatarChangeForm.get('avatar').errors">
+            <button class="btn btn-primary"
+                    type="submit"
+                    [disabled]="!avatarChangeForm.valid || avatarFormSubmitting"
+                    id="user-change-avatar-button">Změnit avatar
+            </button>
+            <small id="avatar-change-help" class="form-text text-muted">Maximální velikost obrázku jsou 2 MB. Povolené
+              typy souborů jsou <span *ngFor="let i of this.allowedExtensions">.{{i}} </span></small>
+
+            <div class="invalid-feedback"
+                 *ngIf="avatarChangeForm.get('avatar').touched && avatarChangeForm.get('avatar').hasError('required')">
+              Toto pole je povinné
+            </div>
+            <div class="invalid-feedback"
+                 *ngIf="avatarChangeForm.get('avatar').touched && avatarChangeForm.get('avatar').hasError('badSize')">
+              Soubor je větší než 2 MB
+            </div>
+            <div class="invalid-feedback"
+                 *ngIf="avatarChangeForm.get('avatar').touched && avatarChangeForm.get('avatar').hasError('badExtension')">
+              Soubor je v nepodporovaném formátu
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row my-4">
+  <hr class="text-muted">
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <form [formGroup]="userEditForm" (ngSubmit)="onUserEditSubmit()">
+
+      <div class="form-floating mb-2">
+        <input type="text"
+               class="form-control"
+               id="register-firstname"
+               placeholder="Křestní jméno"
+               formControlName="firstName"
+               required="required"
+               [class.is-invalid]="userEditForm.get('firstName').touched && userEditForm.get('firstName').errors"
+               [class.is-valid]="userEditForm.get('firstName').touched && !userEditForm.get('firstName').errors"
+        >
+        <label for="register-firstname">Křestní jméno</label>
+        <div class="invalid-feedback"
+             *ngIf="userEditForm.get('firstName').touched && userEditForm.get('firstName').hasError('required')">
+          Toto pole je povinné
+        </div>
+      </div>
+
+      <div class="form-floating mb-2">
+        <input type="text"
+               class="form-control"
+               id="register-lastname"
+               placeholder="Příjmení"
+               formControlName="lastName"
+               required="required"
+               [class.is-invalid]="userEditForm.get('lastName').touched && userEditForm.get('lastName').errors"
+               [class.is-valid]="userEditForm.get('lastName').touched && !userEditForm.get('lastName').errors"
+        >
+        <label for="register-firstname">Příjmení</label>
+        <div class="invalid-feedback"
+             *ngIf="userEditForm.get('firstName').touched && userEditForm.get('lastName').hasError('required')">
+          Toto pole je povinné
+        </div>
+      </div>
+
+      <div class="form-floating mb-2">
+        <textarea class="form-control h-auto"
+                  placeholder="Napište něco o sobě"
+                  id="floatingTextarea"
+                  formControlName="description"
+                  rows="4"></textarea>
+        <label for="floatingTextarea">Napište něco o sobě</label>
+      </div>
+
+      <button class="btn btn-lg btn-primary btn-block w-100"
+              type="submit"
+              [disabled]="!userEditForm.valid || !userEditForm.touched || userEditFormSubmitting">
+        Upravit údaje
+      </button>
+      <small class="text-muted">Pole označená <span class="text-info">tyrkysovým okrajem</span> jsou povinná.</small>
+    </form>
+  </div>
+</div>
