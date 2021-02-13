@@ -4,7 +4,11 @@ import {FileControllerService} from '../api/services/file-controller.service';
 import {UserControllerService} from '../api/services/user-controller.service';
 import {StrictHttpResponse} from '../api/strict-http-response';
 import {FileUploadResponse} from '../api/models/file-upload-response';
-import {catchError, flatMap, mergeMap, tap} from 'rxjs/operators';
+import {catchError, mergeMap, tap, timestamp} from 'rxjs/operators';
+import {LoginRequest} from '../api/models/login-request';
+import {JwtResponse} from '../api/models/jwt-response';
+import {TokenStorageService} from './token-storage.service';
+import {environment} from '../../environments/environment.prod';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +18,7 @@ export class UserService implements OnDestroy{
   private avatarFormChangeRequestSubscription: Subscription;
 
   constructor(
+    public tokenStorageService: TokenStorageService,
     public fileControllerService: FileControllerService,
     public userControllerService: UserControllerService) { }
 
@@ -21,9 +26,36 @@ export class UserService implements OnDestroy{
         if (this.avatarFormChangeRequestSubscription) {
           this.avatarFormChangeRequestSubscription.unsubscribe();
         }
-    }
+  }
+
+  login(request: { body: LoginRequest }): Observable<boolean> {
+    return new Observable<boolean>((observer) => {
+      this.userControllerService.login$Response(request)
+        .pipe(
+          catchError((err: any) => of(err))
+        )
+        .subscribe((response: StrictHttpResponse<JwtResponse>) => {
+
+            const jwtResponse: JwtResponse = response.body;
+            if (response.ok && jwtResponse) {
+
+              this.tokenStorageService.saveLoggedUser(jwtResponse);
+
+              observer.next(true);
+              observer.complete();
+            }
+
+            observer.error('Login failed');
+        });
+    });
+  }
 
   updateUserAvatar(avatar: Blob): Observable<boolean> {
+
+    const loggedUser: JwtResponse = this.tokenStorageService.getLoggedUser();
+    if (loggedUser == null) {
+      throw new Error('User not logged in');
+    }
 
     return new Observable<boolean>((observer) => {
       this.fileControllerService.uploadFile$Response({
@@ -45,7 +77,7 @@ export class UserService implements OnDestroy{
               console.log(firstResponse);
               // Creating object for EP-B calling
               const avatarUpdateParams = {
-                id: 1,
+                id: loggedUser.id,
                 body: {
                   avatarUUID: firstResponse.body.fileUUID
                 },
@@ -62,5 +94,15 @@ export class UserService implements OnDestroy{
         )
         .subscribe();
     });
+  }
+
+  getLooedPersonAvatarUrl(): string {
+    const loggedUser = this.tokenStorageService.getLoggedUser();
+
+    if (loggedUser != null && loggedUser.avatarUUID != null) {
+      return environment.API_IMAGE_URL + loggedUser.avatarUUID + '?' + new Date().getTime();
+    }
+
+    return 'https://dummyimage.com/200x200/19a846/fff&text=' + loggedUser?.username.charAt(0).toUpperCase();
   }
 }

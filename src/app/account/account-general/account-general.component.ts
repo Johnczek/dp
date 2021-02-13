@@ -4,7 +4,6 @@ import {Subscription} from 'rxjs';
 import {UserControllerService} from '../../api/services/user-controller.service';
 import {FileControllerService} from '../../api/services/file-controller.service';
 import {StrictHttpResponse} from '../../api/strict-http-response';
-import {FileUploadResponse} from '../../api/models/file-upload-response';
 import {UserChangeRequest} from '../../api/models/user-change-request';
 import {UserDto} from '../../api/models/user-dto';
 import {finalize} from 'rxjs/operators';
@@ -32,6 +31,8 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
   allowedExtensions: string[] = ['jpg', 'png', 'gif'];
 
   pictureBase64: Blob;
+
+  currentAvatarUrl: string;
 
   // TODO make this dynamic
   loggedUser: UserDto = {
@@ -66,6 +67,8 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
 
     this.initUserAvatarChangeForm();
     this.initUserEditForm();
+
+    this.currentAvatarUrl = this.userService.getLooedPersonAvatarUrl();
   }
 
   private initUserEditForm(): void {

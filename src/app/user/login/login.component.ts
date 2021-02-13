@@ -2,9 +2,10 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {UserControllerService} from '../../api/services/user-controller.service';
 import {JwtResponse, LoginRequest} from '../../api/models';
-import {finalize} from 'rxjs/operators';
-import {Subscription} from 'rxjs';
+import {finalize, takeUntil} from 'rxjs/operators';
+import {Subject, Subscription} from 'rxjs';
 import {StrictHttpResponse} from '../../api/strict-http-response';
+import {UserService} from '../../service/user.service';
 
 @Component({
   selector: 'app-login',
@@ -17,15 +18,14 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   loginForm: FormGroup;
 
-  loginRequestSubscription: Subscription;
+  ngUnsubscribe = new Subject();
 
-  constructor(public userControllerService: UserControllerService) {
+
+  constructor(public userService: UserService) {
   }
 
   ngOnDestroy(): void {
-    if (this.loginRequestSubscription) {
-      this.loginRequestSubscription.unsubscribe();
-    }
+    this.ngUnsubscribe?.unsubscribe();
   }
 
   ngOnInit(): void {
@@ -48,14 +48,19 @@ export class LoginComponent implements OnInit, OnDestroy {
       password: this.loginForm.get('password').value
     };
 
-    this.loginRequestSubscription = this.userControllerService.login$Response({body: loginRequest})
+    this.userService.login({body: loginRequest})
       .pipe(
+        takeUntil(this.ngUnsubscribe),
         finalize(() => this.loginFormSubmitting = false),
       )
-      .subscribe((response: StrictHttpResponse<JwtResponse>) => {
-        const content: JwtResponse = response.body;
+      .subscribe(() => {
+          console.log('success');
 
-        // TODO complete login
-      });
+          // TODO complete login
+        },
+        (err: any) => {
+          console.error('erorororro');
+          console.error(err);
+        });
   }
 }
