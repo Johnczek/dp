@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {UserControllerService} from '../../api/services/user-controller.service';
@@ -13,6 +13,12 @@ import {AddressCreationRequest} from '../../api/models/address-creation-request'
   styleUrls: ['./address.component.scss']
 })
 export class AddressComponent implements OnInit, OnDestroy {
+
+  @ViewChild('addressAddFormWrapper')
+  addressAddFormWrapper: ElementRef;
+
+  @ViewChild('addressAddFormToggle')
+  addressAddFormToggle: ElementRef;
 
   // TODO dynamically retrieve addresses
   addresses: Array<AddressDto> = [
@@ -121,11 +127,7 @@ export class AddressComponent implements OnInit, OnDestroy {
   }
 
   showAddForm(): void {
-
-    const addressAddToggle = document.getElementById('address-add-toggle');
-    addressAddToggle.classList.add('d-none');
-
-    const addressAddForm = document.getElementById('address-add-form');
-    addressAddForm.classList.remove('d-none');
+    this.addressAddFormToggle?.nativeElement.classList.add('d-none');
+    this.addressAddFormWrapper?.nativeElement.classList.remove('d-none');
   }
 }

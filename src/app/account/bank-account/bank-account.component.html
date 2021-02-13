@@ -36,13 +36,13 @@
 
 <div class="row mt-4">
   <div class="col-12">
-    <div class="btn btn-primary" (click)="showAddForm()" id="bank-account-add-toggle">
+    <div class="btn btn-primary" (click)="showAddForm()" #bankAccountAddFormToggle>
       Přidat bankovní účet
     </div>
   </div>
 </div>
 
-<div class="row mt-4 d-none" id="bank-account-add-form">
+<div class="row mt-4 d-none" #bankAccountAddFormWrapper>
   <form [formGroup]="bankAccountAddForm" (ngSubmit)="onBankAccountAddFormSubmit()">
     <h5 class="mb-3">Založení nového bankovního účtu</h5>
 

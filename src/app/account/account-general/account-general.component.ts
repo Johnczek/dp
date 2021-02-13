@@ -8,6 +8,7 @@ import {FileUploadResponse} from '../../api/models/file-upload-response';
 import {UserChangeRequest} from '../../api/models/user-change-request';
 import {UserDto} from '../../api/models/user-dto';
 import {finalize} from 'rxjs/operators';
+import {UserService} from '../../service/user.service';
 
 @Component({
   selector: 'app-account-general',
@@ -26,13 +27,11 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
 
   avatarChangeForm: FormGroup;
 
-  avatarFormFileUploadSubscription: Subscription;
-
-  avatarFormChangeRequestSubscription: Subscription;
+  avatarFormSubscription: Subscription;
 
   allowedExtensions: string[] = ['jpg', 'png', 'gif'];
 
-  pictureBase64: string;
+  pictureBase64: Blob;
 
   // TODO make this dynamic
   loggedUser: UserDto = {
@@ -47,6 +46,7 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
   };
 
   constructor(
+    public userService: UserService,
     public fileControllerService: FileControllerService,
     public userControllerService: UserControllerService) {
   }
@@ -57,12 +57,8 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
       this.userEditFormSubscription.unsubscribe();
     }
 
-    if (this.avatarFormFileUploadSubscription) {
-      this.avatarFormFileUploadSubscription.unsubscribe();
-    }
-
-    if (this.avatarFormChangeRequestSubscription) {
-      this.avatarFormChangeRequestSubscription.unsubscribe();
+    if (this.avatarFormSubscription) {
+      this.avatarFormSubscription.unsubscribe();
     }
   }
 
@@ -75,8 +71,8 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
   private initUserEditForm(): void {
 
     this.userEditForm = new FormGroup({
-      id: new FormControl(this.loggedUser.id),
-      email: new FormControl(this.loggedUser.email),
+      id: new FormControl({value: this.loggedUser.id, disabled: true}),
+      email: new FormControl({value: this.loggedUser.email, disabled: true}),
       firstName: new FormControl(this.loggedUser.firstName, [Validators.required]),
       lastName: new FormControl(this.loggedUser.lastName, [Validators.required]),
       description: new FormControl(this.loggedUser.description)
@@ -124,29 +120,16 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
   onAvatarChangeSubmit(): void {
 
     this.avatarFormSubmitting = true;
+    console.log(this.pictureBase64);
 
-    this.avatarFormFileUploadSubscription = this.fileControllerService.uploadFile$Response({
-      fileType: 'USER_AVATAR',
-      body: {
-        file: this.convertBase64ToBlob(this.pictureBase64)
-      }
-    })
+    this.userService.updateUserAvatar(this.pictureBase64)
       .pipe(finalize(() => this.avatarFormSubmitting = false))
-      .subscribe((response: StrictHttpResponse<FileUploadResponse>) => {
-        console.log(response);
-      });
-
-    const avatarUpdateParams = {
-      id: 1,
-      body: {
-        avatarUUID: ''
-      }
-    };
-
-    this.avatarFormChangeRequestSubscription = this.userControllerService.updateUserAvatar$Response(avatarUpdateParams)
-      .subscribe((response: StrictHttpResponse<string>) => {
-        console.log(response);
-      });
+      .subscribe(() => {
+          console.log('success');
+        },
+        () => {
+          console.error('error');
+        });
   }
 
   validateAvatar(event: any): void {
@@ -164,7 +147,7 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
           if (this.allowedExtensions.indexOf(fileExt) === -1) {
             this.avatarChangeForm.get('avatar').setErrors({badExtension: true});
           }
-          this.pictureBase64 = (reader.result as string).split(',')[1];
+          this.pictureBase64 = this.convertBase64ToBlob(reader.result as string);
         }
       };
     }
@@ -192,6 +175,8 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
     for (let i = 0; i < decodedData.length; ++i) {
       uInt8Array[i] = decodedData.charCodeAt(i);
     }
+
+    console.log(imageType);
 
     // Return BLOB image after conversion
     return new Blob([uInt8Array], { type: imageType });

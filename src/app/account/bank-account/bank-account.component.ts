@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {BankAccountDto} from '../../api/models/bank-account-dto';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
@@ -13,6 +13,12 @@ import {finalize} from 'rxjs/operators';
   styleUrls: ['./bank-account.component.scss']
 })
 export class BankAccountComponent implements OnInit, OnDestroy {
+
+  @ViewChild('bankAccountAddFormWrapper')
+  bankAccountAddFormWrapper: ElementRef;
+
+  @ViewChild('bankAccountAddFormToggle')
+  bankAccountAddFormToggle: ElementRef;
 
   // TODO dynamically retrieve bank accounts
   bankAccounts: Array<BankAccountDto> = [
@@ -122,10 +128,7 @@ export class BankAccountComponent implements OnInit, OnDestroy {
 
   showAddForm(): void {
 
-    const bankAccountAddToggle = document.getElementById('bank-account-add-toggle');
-    bankAccountAddToggle.classList.add('d-none');
-
-    const bankAccountAddForm = document.getElementById('bank-account-add-form');
-    bankAccountAddForm.classList.remove('d-none');
+    this.bankAccountAddFormToggle?.nativeElement.classList.add('d-none');
+    this.bankAccountAddFormWrapper?.nativeElement.classList.remove('d-none');
   }
 }
