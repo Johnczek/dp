@@ -17,6 +17,7 @@ import {BankAccountComponent} from './account/bank-account/bank-account.componen
 import {AddressComponent} from './account/address/address.component';
 import {AccountGeneralComponent} from './account/account-general/account-general.component';
 import {authInterceptorProviders} from './interceptor/http-interceptor';
+import { AlertComponent } from './alert/alert.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import {authInterceptorProviders} from './interceptor/http-interceptor';
     ChangePasswordComponent,
     BankAccountComponent,
     AddressComponent,
-    AccountGeneralComponent
+    AccountGeneralComponent,
+    AlertComponent
   ],
   imports: [
     BrowserModule,

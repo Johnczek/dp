@@ -1,8 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
-import {UserControllerService} from '../../api/services/user-controller.service';
-import {FileControllerService} from '../../api/services/file-controller.service';
 import {StrictHttpResponse} from '../../api/strict-http-response';
 import {UserChangeRequest} from '../../api/models/user-change-request';
 import {UserDto} from '../../api/models/user-dto';
@@ -11,6 +9,8 @@ import {UserService} from '../../service/user.service';
 import {FileService} from '../../service/file.service';
 import {JwtResponse} from '../../api/models/jwt-response';
 import {ENABLED_IMAGE_FORMATS} from '../../globals';
+import {AlertService} from '../../service/alert.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-account-general',
@@ -42,10 +42,10 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
   allowedExtensions = ENABLED_IMAGE_FORMATS;
 
   constructor(
+    public router: Router,
+    public alertService: AlertService,
     public fileService: FileService,
-    public userService: UserService,
-    public fileControllerService: FileControllerService,
-    public userControllerService: UserControllerService) {
+    public userService: UserService) {
   }
 
   ngOnDestroy(): void {
@@ -86,27 +86,30 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
     }
 
     this.userService.getUserById(loggedUser.id).subscribe((response: StrictHttpResponse<UserDto>) => {
-      // TODO handle not found
 
-      this.user = response.body;
+        this.user = response.body;
 
-      this.getCurrentAvatar();
+        this.getCurrentAvatar();
 
-      this.avatarChangeForm = new FormGroup({
-        avatar: new FormControl(null, [Validators.required]),
-      });
+        this.avatarChangeForm = new FormGroup({
+          avatar: new FormControl(null, [Validators.required]),
+        });
 
-      this.userEditForm = new FormGroup({
-        id: new FormControl({value: this.user.id, disabled: true}),
-        email: new FormControl({value: this.user.email, disabled: true}),
-        firstName: new FormControl(this.user.firstName, [Validators.required]),
-        lastName: new FormControl(this.user.lastName, [Validators.required]),
-        description: new FormControl(this.user.description)
-      });
-    });
+        this.userEditForm = new FormGroup({
+          id: new FormControl({value: this.user.id, disabled: true}),
+          email: new FormControl({value: this.user.email, disabled: true}),
+          firstName: new FormControl(this.user.firstName, [Validators.required]),
+          lastName: new FormControl(this.user.lastName, [Validators.required]),
+          description: new FormControl(this.user.description)
+        });
+      },
+      () => {
+        this.alertService.error('Uživatel nenalezen');
+        this.router.navigate(['/login']);
+      }
+    );
   }
 
-  // TODO implement user edit
   onUserEditSubmit(): void {
 
     const loggedUser: JwtResponse = this.userService.getLoggedUser();
@@ -129,15 +132,16 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
 
     this.userEditFormSubscription = this.userService.editUser(params)
       .pipe(finalize(() => this.userEditFormSubmitting = false))
-      .subscribe((response: StrictHttpResponse<string>) => {
-
-        // TODO handle not found
-
-        this.userService.refreshLoggedUserData();
+      .subscribe(() => {
+          this.userService.refreshLoggedUserData();
+          this.alertService.success('Úprava uživatelských dat proběhla úspěšně');
+      }, (error) => {
+        // TODO handle error
+        this.alertService.error('Nebylo možné upravit uživatelský účet');
+        console.log(error);
       });
   }
 
-  // TODO implement user avatar upgrade
   onAvatarChangeSubmit(): void {
 
     this.avatarFormSubmitting = true;
@@ -149,12 +153,13 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
       ))
       .subscribe((response) => {
 
-          // TODO handle error
 
           this.currentAvatarUrl = this.fileService.getFileUrlByUUID(response);
         },
-        () => {
-          console.error('error');
+        (error) => {
+          // TODO handle error
+          this.alertService.error('Nebylo možné měnit avatar');
+          console.error(error);
         });
   }
 

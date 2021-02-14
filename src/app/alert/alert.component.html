@@ -1,0 +1,6 @@
+<div id="alerts-wrapper">
+  <div *ngFor="let alert of alerts" class="{{cssClass(alert)}} inner-alert">
+    <a class="close" (click)="removeAlert(alert)"><i class="bi bi-x"></i></a>
+    <span [innerHTML]="alert.message"></span>
+  </div>
+</div>
