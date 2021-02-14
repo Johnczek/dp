@@ -1,23 +1,27 @@
-import {Injectable, OnDestroy} from '@angular/core';
-import {Observable, of, Subscription} from 'rxjs';
+import {Injectable, OnDestroy, OnInit} from '@angular/core';
+import {Observable, of, Subject, Subscription} from 'rxjs';
 import {FileControllerService} from '../api/services/file-controller.service';
 import {UserControllerService} from '../api/services/user-controller.service';
 import {StrictHttpResponse} from '../api/strict-http-response';
 import {FileUploadResponse} from '../api/models/file-upload-response';
-import {catchError, mergeMap, tap, timestamp} from 'rxjs/operators';
+import {catchError, mergeMap, tap} from 'rxjs/operators';
 import {LoginRequest} from '../api/models/login-request';
 import {JwtResponse} from '../api/models/jwt-response';
 import {TokenStorageService} from './token-storage.service';
-import {environment} from '../../environments/environment.prod';
+import {FileService} from './file.service';
+import {UserDto} from '../api/models/user-dto';
 
 @Injectable({
   providedIn: 'root'
 })
-export class UserService implements OnDestroy{
+export class UserService implements OnDestroy {
 
   private avatarFormChangeRequestSubscription: Subscription;
 
+  public userChangeSubject: Subject<JwtResponse> = new Subject<JwtResponse>();
+
   constructor(
+    public fileService: FileService,
     public tokenStorageService: TokenStorageService,
     public fileControllerService: FileControllerService,
     public userControllerService: UserControllerService) { }
@@ -40,6 +44,7 @@ export class UserService implements OnDestroy{
             if (response.ok && jwtResponse) {
 
               this.tokenStorageService.saveLoggedUser(jwtResponse);
+              this.userChangeSubject.next(response.body);
 
               observer.next(true);
               observer.complete();
@@ -50,14 +55,28 @@ export class UserService implements OnDestroy{
     });
   }
 
-  updateUserAvatar(avatar: Blob): Observable<boolean> {
+  logOut(): void {
+    this.tokenStorageService.logOut();
+    this.userChangeSubject.next(null);
+  }
+
+  refreshLoggedUserData(): void {
+    this.userControllerService.loggedUser$Response().subscribe((response: StrictHttpResponse<JwtResponse>) => {
+      this.tokenStorageService.saveLoggedUser(response.body);
+      this.userChangeSubject.next(response.body);
+    });
+  }
+
+  updateUserAvatar(avatar: Blob): Observable<string> {
 
     const loggedUser: JwtResponse = this.tokenStorageService.getLoggedUser();
     if (loggedUser == null) {
-      throw new Error('User not logged in');
+      throw new Error('Uživatel není přihlášený');
     }
 
-    return new Observable<boolean>((observer) => {
+    let avatarUUID: string;
+
+    return new Observable<string>((observer) => {
       this.fileControllerService.uploadFile$Response({
         fileType: 'USER_AVATAR',
         body: {
@@ -65,30 +84,22 @@ export class UserService implements OnDestroy{
         },
       })
         .pipe(
-          tap((responseOfFirstApiCall: StrictHttpResponse<FileUploadResponse>) => {
-            // Do whatever you want here, but you might not need that since you get the response below as well (in the flatMap)
-            // Handle returned UUID and somehow pass it into an observable belog
-            console.log('Body: ');
-            console.log(responseOfFirstApiCall.body);
-          }),
           mergeMap(
             (firstResponse: StrictHttpResponse<FileUploadResponse>) => {
-              console.log('Bla: ');
-              console.log(firstResponse);
-              // Creating object for EP-B calling
+              avatarUUID = firstResponse.body.fileUUID;
               const avatarUpdateParams = {
                 id: loggedUser.id,
                 body: {
-                  avatarUUID: firstResponse.body.fileUUID
+                  avatarUUID
                 },
               };
 
               return this.userControllerService.updateUserAvatar$Response(avatarUpdateParams);
             }
           ),
-          tap((SecondResponse: StrictHttpResponse<string>) => {
-            console.log(SecondResponse);
-            observer.next(true);
+          tap((secondResponse: StrictHttpResponse<string>) => {
+            this.refreshLoggedUserData();
+            observer.next(avatarUUID);
           }),
           catchError((err: any) => of(err))
         )
@@ -96,13 +107,15 @@ export class UserService implements OnDestroy{
     });
   }
 
-  getLooedPersonAvatarUrl(): string {
-    const loggedUser = this.tokenStorageService.getLoggedUser();
+  getLoggedUser(): JwtResponse {
+    return this.tokenStorageService.getLoggedUser();
+  }
 
-    if (loggedUser != null && loggedUser.avatarUUID != null) {
-      return environment.API_IMAGE_URL + loggedUser.avatarUUID + '?' + new Date().getTime();
-    }
+  getUserById(id: number): Observable<StrictHttpResponse<UserDto>> {
+    return this.userControllerService.findById$Response({id});
+  }
 
-    return 'https://dummyimage.com/200x200/19a846/fff&text=' + loggedUser?.username.charAt(0).toUpperCase();
+  editUser(data): Observable<StrictHttpResponse<string>> {
+    return this.userControllerService.patch$Response(data);
   }
 }

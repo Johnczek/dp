@@ -21,6 +21,7 @@ export class CustomHttpInterceptor implements HttpInterceptor {
 
     return next.handle(authReq).pipe(
       tap(x => x, e => {
+        console.error(e);
         console.error(`Error performing request, status code = ${e.status}`);
         return EMPTY;
       })

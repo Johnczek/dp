@@ -8,6 +8,9 @@ import {UserChangeRequest} from '../../api/models/user-change-request';
 import {UserDto} from '../../api/models/user-dto';
 import {finalize} from 'rxjs/operators';
 import {UserService} from '../../service/user.service';
+import {FileService} from '../../service/file.service';
+import {JwtResponse} from '../../api/models/jwt-response';
+import {ENABLED_IMAGE_FORMATS} from '../../globals';
 
 @Component({
   selector: 'app-account-general',
@@ -18,35 +21,28 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
 
   userEditFormSubmitting = false;
 
-  userEditForm: FormGroup;
-
-  userEditFormSubscription: Subscription;
-
-  avatarFormSubmitting = false;
-
-  avatarChangeForm: FormGroup;
-
-  avatarFormSubscription: Subscription;
-
-  allowedExtensions: string[] = ['jpg', 'png', 'gif'];
-
   pictureBase64: Blob;
 
   currentAvatarUrl: string;
 
-  // TODO make this dynamic
-  loggedUser: UserDto = {
-    addresses: [],
-    avatarUUID: 'avatar',
-    bankAccounts: [],
-    description: 'desc',
-    email: 'email@email.com',
-    firstName: 'firstname',
-    id: 1,
-    lastName: 'lastname'
-  };
+  avatarFormSubmitting = false;
+
+  userEditForm: FormGroup;
+
+  avatarChangeForm: FormGroup;
+
+  userEditFormSubscription: Subscription;
+
+  userChangeSubscription: Subscription;
+
+  avatarFormSubscription: Subscription;
+
+  user: UserDto;
+
+  allowedExtensions = ENABLED_IMAGE_FORMATS;
 
   constructor(
+    public fileService: FileService,
     public userService: UserService,
     public fileControllerService: FileControllerService,
     public userControllerService: UserControllerService) {
@@ -54,50 +50,69 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
 
-    if (this.userEditFormSubscription) {
-      this.userEditFormSubscription.unsubscribe();
-    }
-
-    if (this.avatarFormSubscription) {
-      this.avatarFormSubscription.unsubscribe();
-    }
+    this.userEditFormSubscription?.unsubscribe();
+    this.avatarFormSubscription?.unsubscribe();
+    this.userChangeSubscription?.unsubscribe();
   }
 
   ngOnInit(): void {
-
-    this.initUserAvatarChangeForm();
-    this.initUserEditForm();
-
-    this.currentAvatarUrl = this.userService.getLooedPersonAvatarUrl();
+    this.initForms();
   }
 
-  private initUserEditForm(): void {
+  detectChanges(): void {
+    this.userChangeSubscription = this.userService.userChangeSubject
+      .subscribe((data: JwtResponse) => {
+        if (data != null) {
+          this.user.id = data.id;
+          this.user.email = data.email;
+          this.user.avatarUUID = data.avatarUUID;
+          this.user.firstName = data.firstName;
+          this.user.lastName = data.lastName;
 
-    this.userEditForm = new FormGroup({
-      id: new FormControl({value: this.loggedUser.id, disabled: true}),
-      email: new FormControl({value: this.loggedUser.email, disabled: true}),
-      firstName: new FormControl(this.loggedUser.firstName, [Validators.required]),
-      lastName: new FormControl(this.loggedUser.lastName, [Validators.required]),
-      description: new FormControl(this.loggedUser.description)
-    });
-
-    this.userEditForm.valueChanges.subscribe(() => {
-      console.log(this.userEditForm);
-    });
+          this.getCurrentAvatar();
+        }
+      });
   }
 
-  private initUserAvatarChangeForm(): void {
-    this.avatarChangeForm = new FormGroup({
-      avatar: new FormControl(null, [Validators.required]),
-    });
+  private getCurrentAvatar(): void {
+    this.currentAvatarUrl = this.fileService.getAvatarByUUIDOrDefault(this.user.avatarUUID);
+  }
 
-    this.avatarChangeForm.valueChanges.subscribe(() => {
-      console.log(this.avatarChangeForm);
+  private initForms(): void {
+
+    const loggedUser: JwtResponse = this.userService.getLoggedUser();
+    if (loggedUser == null) {
+      throw new Error('Nemáte právo zobrazit editační stránku uživatele');
+    }
+
+    this.userService.getUserById(loggedUser.id).subscribe((response: StrictHttpResponse<UserDto>) => {
+      // TODO handle not found
+
+      this.user = response.body;
+
+      this.getCurrentAvatar();
+
+      this.avatarChangeForm = new FormGroup({
+        avatar: new FormControl(null, [Validators.required]),
+      });
+
+      this.userEditForm = new FormGroup({
+        id: new FormControl({value: this.user.id, disabled: true}),
+        email: new FormControl({value: this.user.email, disabled: true}),
+        firstName: new FormControl(this.user.firstName, [Validators.required]),
+        lastName: new FormControl(this.user.lastName, [Validators.required]),
+        description: new FormControl(this.user.description)
+      });
     });
   }
 
   // TODO implement user edit
   onUserEditSubmit(): void {
+
+    const loggedUser: JwtResponse = this.userService.getLoggedUser();
+    if (loggedUser == null) {
+      throw new Error('Nemáte právo editovat uživatele');
+    }
 
     this.userEditFormSubmitting = true;
 
@@ -108,14 +123,17 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
     };
 
     const params = {
-      id: 1,
+      id: loggedUser.id,
       body: userChangeRequest
     };
 
-    this.userEditFormSubscription = this.userControllerService.patch$Response(params)
+    this.userEditFormSubscription = this.userService.editUser(params)
       .pipe(finalize(() => this.userEditFormSubmitting = false))
       .subscribe((response: StrictHttpResponse<string>) => {
-        console.log(response);
+
+        // TODO handle not found
+
+        this.userService.refreshLoggedUserData();
       });
   }
 
@@ -123,12 +141,17 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
   onAvatarChangeSubmit(): void {
 
     this.avatarFormSubmitting = true;
-    console.log(this.pictureBase64);
 
     this.userService.updateUserAvatar(this.pictureBase64)
-      .pipe(finalize(() => this.avatarFormSubmitting = false))
-      .subscribe(() => {
-          console.log('success');
+      .pipe(finalize(() => {
+          this.avatarFormSubmitting = false;
+        }
+      ))
+      .subscribe((response) => {
+
+          // TODO handle error
+
+          this.currentAvatarUrl = this.fileService.getFileUrlByUUID(response);
         },
         () => {
           console.error('error');
@@ -147,41 +170,12 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
         } else {
 
           const fileExt = file.name.split('.').pop();
-          if (this.allowedExtensions.indexOf(fileExt) === -1) {
+          if (ENABLED_IMAGE_FORMATS.indexOf(fileExt) === -1) {
             this.avatarChangeForm.get('avatar').setErrors({badExtension: true});
           }
-          this.pictureBase64 = this.convertBase64ToBlob(reader.result as string);
+          this.pictureBase64 = this.fileService.convertBase64ToBlob(reader.result as string);
         }
       };
     }
-  }
-
-  // TODO move to special service
-  /**
-   * Convert BASE64 to BLOB
-   * @param base64Image Pass Base64 image data to convert into the BLOB
-   */
-  private convertBase64ToBlob(base64Image: string): Blob {
-    // Split into two parts
-    const parts = base64Image.split(';base64,');
-
-    // Hold the content type
-    const imageType = parts[0].split(':')[1];
-
-    // Decode Base64 string
-    const decodedData = window.atob(parts[1]);
-
-    // Create UNIT8ARRAY of size same as row data length
-    const uInt8Array = new Uint8Array(decodedData.length);
-
-    // Insert all character code into uInt8Array
-    for (let i = 0; i < decodedData.length; ++i) {
-      uInt8Array[i] = decodedData.charCodeAt(i);
-    }
-
-    console.log(imageType);
-
-    // Return BLOB image after conversion
-    return new Blob([uInt8Array], { type: imageType });
   }
 }

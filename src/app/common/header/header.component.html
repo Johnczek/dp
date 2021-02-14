@@ -6,32 +6,36 @@
     </nav>
   </div>
 
-  <a class="btn btn-sm btn-outline-primary me-2" routerLink="/login">Přihlášení</a>
-  <a class="btn btn-sm btn-success d-none d-sm-block" routerLink="/register">Registrace</a>
-  <ul class="list-unstyled m-0">
-    <li class="nav-item dropdown list-unstyled">
-      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
-         aria-expanded="false">
-        <img src="{{avatarPath}}" alt="" class="rounded-circle img-fluid header-avatar">
-      </a>
-      <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-        <li class="dropdown-item-text">
-          <div>Jméno příjmení</div>
-          <small class="text-muted">email@email.com</small>
-        </li>
-        <li>
-          <hr class="dropdown-divider">
-        </li>
-        <li><a class="dropdown-item" href="#">Můj košík</a></li>
-        <li><a class="dropdown-item" routerLink="/account">Můj profil</a></li>
-        <li><a class="dropdown-item" href="#">Mé objednávky</a></li>
-        <li><a class="dropdown-item" href="#">Vystavit předmět</a></li>
-        <li>
-          <hr class="dropdown-divider">
-        </li>
-        <li><a class="dropdown-item" href="#">Odhlásit se</a></li>
-      </ul>
-    </li>
-  </ul>
+  <div *ngIf="!isLoggedIn; else loggedInHeaderMenu" class="d-flex">
+    <a class="btn btn-sm btn-outline-primary me-2" routerLink="/login">Přihlášení</a>
+    <a class="btn btn-sm btn-success d-none d-sm-block" routerLink="/register">Registrace</a>
+  </div>
+  <ng-template #loggedInHeaderMenu>
+    <ul class="list-unstyled m-0">
+      <li class="nav-item dropdown list-unstyled">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown"
+           aria-expanded="false">
+          <img [src]="avatarPath" alt="" class="rounded-circle img-fluid header-avatar">
+        </a>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <li class="dropdown-item-text">
+            <div>{{loggedUser.firstName}} {{loggedUser.lastName}}</div>
+            <small class="text-muted">{{loggedUser.email}}</small>
+          </li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li><a class="dropdown-item" href="#">Můj košík</a></li>
+          <li><a class="dropdown-item" routerLink="/account">Můj profil</a></li>
+          <li><a class="dropdown-item" href="#">Mé objednávky</a></li>
+          <li><a class="dropdown-item" href="#">Vystavit předmět</a></li>
+          <li>
+            <hr class="dropdown-divider">
+          </li>
+          <li><a class="dropdown-item" (click)="logOut()">Odhlásit se</a></li>
+        </ul>
+      </li>
+    </ul>
+  </ng-template>
 </header>
 

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {JwtResponse} from '../api/models/jwt-response';
-import {SESSION_STORAGE_USER_KEY} from '../globals';
+import {LOCAL_STORAGE_USER_KEY} from '../globals';
 
 @Injectable({
   providedIn: 'root'
@@ -11,16 +11,16 @@ export class TokenStorageService {
   }
 
   logOut(): void {
-    sessionStorage.clear();
+    localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
   }
 
   public saveLoggedUser(user: JwtResponse): void {
-    sessionStorage.removeItem(SESSION_STORAGE_USER_KEY);
-    sessionStorage.setItem(SESSION_STORAGE_USER_KEY, JSON.stringify(user));
+      localStorage.removeItem(LOCAL_STORAGE_USER_KEY);
+      localStorage.setItem(LOCAL_STORAGE_USER_KEY, JSON.stringify(user));
   }
 
   public getLoggedUser(): JwtResponse {
-    const user = sessionStorage.getItem(SESSION_STORAGE_USER_KEY);
+    const user = localStorage.getItem(LOCAL_STORAGE_USER_KEY);
     if (user) {
       return JSON.parse(user);
     }
