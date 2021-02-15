@@ -43,7 +43,7 @@
 </div>
 
 <div class="row mt-4 d-none" #bankAccountAddFormWrapper>
-  <form [formGroup]="bankAccountAddForm" (ngSubmit)="onBankAccountAddFormSubmit()">
+  <form [formGroup]="bankAccountAddForm" *ngIf="bankAccountAddForm" (ngSubmit)="onBankAccountAddFormSubmit()">
     <h5 class="mb-3">Založení nového bankovního účtu</h5>
 
     <div class="form-floating mb-2">

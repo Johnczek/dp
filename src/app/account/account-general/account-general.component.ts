@@ -82,7 +82,8 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
 
     const loggedUser: JwtResponse = this.userService.getLoggedUser();
     if (loggedUser == null) {
-      throw new Error('Nemáte právo zobrazit editační stránku uživatele');
+      this.alertService.error('Uživatel nepřihlášen');
+      this.router.navigate(['/login']);
     }
 
     this.userService.getUserById(loggedUser.id).subscribe((response: StrictHttpResponse<UserDto>) => {

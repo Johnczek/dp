@@ -4,6 +4,10 @@ import {Subscription} from 'rxjs';
 import {UserControllerService} from '../../api/services/user-controller.service';
 import {StrictHttpResponse} from '../../api/strict-http-response';
 import {finalize} from 'rxjs/operators';
+import {UserService} from '../../service/user.service';
+import {JwtResponse} from '../../api/models/jwt-response';
+import {AlertService} from '../../service/alert.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-change-password',
@@ -20,7 +24,11 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
 
   changePasswordFormSubscription: Subscription;
 
-  constructor(public userControllerService: UserControllerService) {
+  constructor(
+    public router: Router,
+    public alertService: AlertService,
+    public userService: UserService,
+    public userControllerService: UserControllerService) {
   }
 
   ngOnDestroy(): void {
@@ -34,6 +42,12 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
   }
 
   private initChangePasswordForm(): void {
+
+    const loggedUser: JwtResponse = this.userService.getLoggedUser();
+    if (loggedUser == null) {
+      this.alertService.error('Uživatel nepřihlášen');
+      this.router.navigate(['/login']);
+    }
 
     this.changePasswordForm = new FormGroup({
       password: new FormControl('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
@@ -49,15 +63,12 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
   onchangePasswordFormSubmit(): void {
     this.changePasswordFormSubmitting = true;
 
-    this.changePasswordFormSubscription = this.userControllerService.updateUserPassword$Response({
-      id: 1,
-      body: {
-        password: this.changePasswordForm.get('password').value
-      }
-    })
+    this.changePasswordFormSubscription = this.userService.changePassword(this.changePasswordForm.get('password').value)
       .pipe(finalize(() => this.changePasswordFormSubmitting = false))
-      .subscribe((response: StrictHttpResponse<string>) => {
-        console.log(response);
+      .subscribe(() => {
+        this.alertService.success('Heslo bylo úspěšně změněno');
+      }, () => {
+        this.alertService.error('Nebylo možné změnit heslo');
       });
   }
 

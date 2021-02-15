@@ -6,6 +6,8 @@ import {finalize, takeUntil} from 'rxjs/operators';
 import {Subject, Subscription} from 'rxjs';
 import {StrictHttpResponse} from '../../api/strict-http-response';
 import {UserService} from '../../service/user.service';
+import {AlertService} from '../../service/alert.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -21,7 +23,10 @@ export class LoginComponent implements OnInit, OnDestroy {
   ngUnsubscribe = new Subject();
 
 
-  constructor(public userService: UserService) {
+  constructor(
+    public router: Router,
+    public alertService: AlertService,
+    public userService: UserService) {
   }
 
   ngOnDestroy(): void {
@@ -54,13 +59,11 @@ export class LoginComponent implements OnInit, OnDestroy {
         finalize(() => this.loginFormSubmitting = false),
       )
       .subscribe(() => {
-          console.log('success');
-
-          // TODO complete login
+          this.alertService.success('Přihlášení proběhlo úspěšně');
+          this.router.navigate(['/']);
         },
         (err: any) => {
-          console.error('erorororro');
-          console.error(err);
+          this.alertService.error('Přihlášení selhalo');
         });
   }
 }

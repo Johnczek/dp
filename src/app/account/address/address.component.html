@@ -22,7 +22,7 @@
           <th>{{address.city}}</th>
           <th>{{address.street}}</th>
           <th>{{address.streetNumber}}</th>
-          <th>{{address.zipCode}}</th>
+          <th>{{address.zipcode}}</th>
           <th>
             <span class="btn p-0" (click)="deleteAddress(address.id)" title="Odstranit adresu">
               <i class="bi bi-trash text-danger"></i>
@@ -45,7 +45,7 @@
 </div>
 
 <div class="row mt-4 d-none" #addressAddFormWrapper>
-  <form [formGroup]="addressAddForm" (ngSubmit)="onAddressAddSubmit()">
+  <form [formGroup]="addressAddForm" *ngIf="addressAddForm" (ngSubmit)="onAddressAddSubmit()">
     <h5 class="mb-3">Založení nové adresy</h5>
 
     <div class="form-floating mb-2">
@@ -94,11 +94,16 @@
              class="form-control"
              id="address-add-zip-code"
              placeholder="PSČ"
-             formControlName="zipCode"
-             [class.is-invalid]="addressAddForm.get('zipCode').touched && addressAddForm.get('zipCode').errors"
-             [class.is-valid]="addressAddForm.get('zipCode').touched && !addressAddForm.get('zipCode').errors"
+             formControlName="zipcode"
+             required="required"
+             [class.is-invalid]="addressAddForm.get('zipcode').touched && addressAddForm.get('zipcode').errors"
+             [class.is-valid]="addressAddForm.get('zipcode').touched && !addressAddForm.get('zipcode').errors"
       >
       <label for="address-add-zip-code">PSČ</label>
+      <div class="invalid-feedback"
+           *ngIf="addressAddForm.get('zipcode').touched && addressAddForm.get('zipcode').hasError('required')">
+        Toto pole je povinné
+      </div>
     </div>
 
     <button class="btn btn-lg btn-primary btn-block w-100"

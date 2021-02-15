@@ -6,6 +6,11 @@ import {UserControllerService} from '../../api/services/user-controller.service'
 import {BankAccountCreationRequest} from '../../api/models/bank-account-creation-request';
 import {StrictHttpResponse} from '../../api/strict-http-response';
 import {finalize} from 'rxjs/operators';
+import {UserService} from '../../service/user.service';
+import {JwtResponse} from '../../api/models/jwt-response';
+import {Router} from '@angular/router';
+import {UserDto} from '../../api/models/user-dto';
+import {AlertService} from '../../service/alert.service';
 
 @Component({
   selector: 'app-bank-account',
@@ -20,31 +25,7 @@ export class BankAccountComponent implements OnInit, OnDestroy {
   @ViewChild('bankAccountAddFormToggle')
   bankAccountAddFormToggle: ElementRef;
 
-  // TODO dynamically retrieve bank accounts
-  bankAccounts: Array<BankAccountDto> = [
-    {
-      id: 1,
-      bankCode: 3030,
-      number: 727558021
-    },
-    {
-      id: 2,
-      bankCode: 100,
-      number: 111333,
-      prefix: 100
-    },
-    {
-      id: 3,
-      bankCode: 3030,
-      number: 10075470
-    },
-    {
-      id: 4,
-      bankCode: 3030,
-      number: 1000000003,
-      prefix: 958
-    }
-  ];
+  bankAccounts: Array<BankAccountDto>;
 
   bankAccountAddFormSubmitting = false;
 
@@ -54,23 +35,37 @@ export class BankAccountComponent implements OnInit, OnDestroy {
 
   bankAccountDeleteFormSubscription: Subscription;
 
-  constructor(public userControllerService: UserControllerService) {
+  userRetrievalSubscription: Subscription;
+
+  constructor(
+    public alertService: AlertService,
+    public router: Router,
+    public userService: UserService,
+    public userControllerService: UserControllerService) {
   }
 
   ngOnInit(): void {
-    this.initBankAccountAddForm();
+
+    const loggedUser: JwtResponse = this.userService.getLoggedUser();
+    if (loggedUser == null) {
+      this.router.navigate(['/']);
+    }
+
+    this.userRetrievalSubscription = this.userService.getUserById(loggedUser.id)
+      .subscribe((response: StrictHttpResponse<UserDto>) => {
+
+        this.bankAccounts = response.body.bankAccounts;
+
+        this.initBankAccountAddForm();
+      });
   }
 
 
   ngOnDestroy(): void {
 
-    if (this.bankAccountAddFormSubscription) {
-      this.bankAccountAddFormSubscription.unsubscribe();
-    }
-
-    if (this.bankAccountDeleteFormSubscription) {
-      this.bankAccountDeleteFormSubscription.unsubscribe();
-    }
+    this.bankAccountAddFormSubscription?.unsubscribe();
+    this.bankAccountDeleteFormSubscription?.unsubscribe();
+    this.userRetrievalSubscription?.unsubscribe();
   }
 
   private initBankAccountAddForm(): void {
@@ -86,43 +81,35 @@ export class BankAccountComponent implements OnInit, OnDestroy {
     });
   }
 
-  // TODO complete delete account
   deleteBankAccount(bankAccountId: number): void {
-    console.log(bankAccountId);
 
-    const request = {
-      userId: 1,
-      bankAccountId
-    };
+    if (confirm('Opravdu si přejete smazat bankovní účet s id ' + bankAccountId + '?')) {
+      this.userService.deleteBankAccount(bankAccountId)
+        .subscribe(() => {
 
-    this.userControllerService.deleteBankAccount$Response(request)
-      .subscribe((response: StrictHttpResponse<string>) => {
-        console.log(response);
-      });
+          this.bankAccounts = this.bankAccounts.filter(bankAccount => bankAccount.id !== bankAccountId);
 
+          this.alertService.success('Bankovní účet s id: ' + bankAccountId + ' byl úspěšně smazán');
+        });
+    }
   }
 
-  // TODO complete add account
   onBankAccountAddFormSubmit(): void {
 
     this.bankAccountAddFormSubmitting = true;
 
-    const request: {
-      userId: number;
-      body: BankAccountCreationRequest
-    } = {
-      userId: 1,
-      body: {
-        bankCode: this.bankAccountAddForm.get('bankCode').value,
-        number: this.bankAccountAddForm.get('number').value,
-        prefix: this.bankAccountAddForm.get('prefix').value,
-      }
+    const request: BankAccountCreationRequest = {
+      bankCode: this.bankAccountAddForm.get('bankCode').value,
+      number: this.bankAccountAddForm.get('number').value,
+      prefix: this.bankAccountAddForm.get('prefix').value,
     };
 
-    this.bankAccountAddFormSubscription = this.userControllerService.addBankAccount$Response(request)
+    this.bankAccountAddFormSubscription = this.userService.addBankAccount(request)
       .pipe(finalize(() => this.bankAccountAddFormSubmitting = false))
-      .subscribe((response: StrictHttpResponse<string>) => {
-        console.log(response);
+      .subscribe((response: StrictHttpResponse<BankAccountDto>) => {
+        this.alertService.success('Nový účet byl úspěšně přidán');
+        this.bankAccounts.push(response.body);
+        this.bankAccountAddForm.reset();
       });
   }
 

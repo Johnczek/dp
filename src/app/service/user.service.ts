@@ -1,4 +1,4 @@
-import {Injectable, OnDestroy, OnInit} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {Observable, of, Subject, Subscription} from 'rxjs';
 import {FileControllerService} from '../api/services/file-controller.service';
 import {UserControllerService} from '../api/services/user-controller.service';
@@ -8,8 +8,12 @@ import {catchError, mergeMap, tap} from 'rxjs/operators';
 import {LoginRequest} from '../api/models/login-request';
 import {JwtResponse} from '../api/models/jwt-response';
 import {TokenStorageService} from './token-storage.service';
-import {FileService} from './file.service';
 import {UserDto} from '../api/models/user-dto';
+import {UserChangePasswordRequest} from '../api/models/user-change-password-request';
+import {BankAccountCreationRequest} from '../api/models/bank-account-creation-request';
+import {BankAccountDto} from '../api/models/bank-account-dto';
+import {AddressCreationRequest} from '../api/models/address-creation-request';
+import {AddressDto} from '../api/models/address-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +25,6 @@ export class UserService implements OnDestroy {
   public userChangeSubject: Subject<JwtResponse> = new Subject<JwtResponse>();
 
   constructor(
-    public fileService: FileService,
     public tokenStorageService: TokenStorageService,
     public fileControllerService: FileControllerService,
     public userControllerService: UserControllerService) { }
@@ -97,13 +100,76 @@ export class UserService implements OnDestroy {
               return this.userControllerService.updateUserAvatar$Response(avatarUpdateParams);
             }
           ),
-          tap((secondResponse: StrictHttpResponse<string>) => {
+          tap(() => {
             this.refreshLoggedUserData();
             observer.next(avatarUUID);
           }),
           catchError((err: any) => of(err))
         )
         .subscribe();
+    });
+  }
+
+  changePassword(password: string): Observable<StrictHttpResponse<string>> {
+
+    const loggedUser: JwtResponse = this.tokenStorageService.getLoggedUser();
+    if (loggedUser == null) {
+      throw new Error('Uživatel není přihlášený');
+    }
+
+    return this.userControllerService.updateUserPassword$Response({
+      id: loggedUser.id,
+      body: {
+        password
+      }
+    });
+  }
+
+  addBankAccount(data: BankAccountCreationRequest): Observable<StrictHttpResponse<BankAccountDto>> {
+    const loggedUser: JwtResponse = this.tokenStorageService.getLoggedUser();
+    if (loggedUser == null) {
+      throw new Error('Uživatel není přihlášený');
+    }
+
+    return this.userControllerService.addBankAccount$Response({
+      userId: loggedUser.id,
+      body: data
+    });
+  }
+
+  deleteBankAccount(id: number): Observable<StrictHttpResponse<string>> {
+    const loggedUser: JwtResponse = this.tokenStorageService.getLoggedUser();
+    if (loggedUser == null) {
+      throw new Error('Uživatel není přihlášený');
+    }
+
+    return this.userControllerService.deleteBankAccount$Response({
+      userId: loggedUser.id,
+      bankAccountId: id
+    });
+  }
+
+  addAddress(data: AddressCreationRequest): Observable<StrictHttpResponse<AddressDto>> {
+    const loggedUser: JwtResponse = this.tokenStorageService.getLoggedUser();
+    if (loggedUser == null) {
+      throw new Error('Uživatel není přihlášený');
+    }
+
+    return this.userControllerService.addAddress$Response({
+      userId: loggedUser.id,
+      body: data
+    });
+  }
+
+  deleteAddress(id: number): Observable<StrictHttpResponse<string>> {
+    const loggedUser: JwtResponse = this.tokenStorageService.getLoggedUser();
+    if (loggedUser == null) {
+      throw new Error('Uživatel není přihlášený');
+    }
+
+    return this.userControllerService.deleteAddress$Response({
+      userId: loggedUser.id,
+      addressId: id
     });
   }
 
