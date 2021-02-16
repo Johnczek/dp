@@ -14,6 +14,7 @@ import {BankAccountCreationRequest} from '../api/models/bank-account-creation-re
 import {BankAccountDto} from '../api/models/bank-account-dto';
 import {AddressCreationRequest} from '../api/models/address-creation-request';
 import {AddressDto} from '../api/models/address-dto';
+import {RegisterRequest} from '../api/models/register-request';
 
 @Injectable({
   providedIn: 'root'
@@ -56,6 +57,10 @@ export class UserService implements OnDestroy {
             observer.error('Login failed');
         });
     });
+  }
+
+  register(data: RegisterRequest): Observable<StrictHttpResponse<string>> {
+    return this.userControllerService.register$Response({body: data});
   }
 
   logOut(): void {
@@ -175,6 +180,10 @@ export class UserService implements OnDestroy {
 
   getLoggedUser(): JwtResponse {
     return this.tokenStorageService.getLoggedUser();
+  }
+
+  isUserLoggedIn(): boolean {
+    return this.getLoggedUser() != null;
   }
 
   getUserById(id: number): Observable<StrictHttpResponse<UserDto>> {

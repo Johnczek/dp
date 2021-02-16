@@ -9,6 +9,8 @@ import {ChangePasswordComponent} from './account/change-password/change-password
 import {BankAccountComponent} from './account/bank-account/bank-account.component';
 import {AddressComponent} from './account/address/address.component';
 import {AccountGeneralComponent} from './account/account-general/account-general.component';
+import {ItemListComponent} from './item/item-list/item-list.component';
+import {ItemDetailComponent} from './item/item-detail/item-detail.component';
 
 // const appRoutes: Routes = [
 //   { path: '', redirectTo: '/map', pathMatch: 'full'},
@@ -44,11 +46,13 @@ const appRoutes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'user-profile/:id', component: UserProfileComponent },
   { path: 'account', component: AccountComponent, children: [
-      { path: '', component: AccountGeneralComponent},
-      { path: 'password', component: ChangePasswordComponent},
-      { path: 'bank-account', component: BankAccountComponent},
-      { path: 'address', component: AddressComponent},
+      { path: '', component: AccountGeneralComponent },
+      { path: 'password', component: ChangePasswordComponent },
+      { path: 'bank-account', component: BankAccountComponent },
+      { path: 'address', component: AddressComponent },
     ] },
+  { path: 'item/:id', component: ItemDetailComponent },
+  { path: 'item', component: ItemListComponent },
 ];
 
 @NgModule({

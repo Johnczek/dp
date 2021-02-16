@@ -57,7 +57,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
     this.isLoggedIn = true;
     this.loggedUser = data;
-    this.avatarPath = this.fileService.getFileUrlByUUID(data.avatarUUID);
+    this.avatarPath = this.fileService.getAvatarByUUIDOrDefault(data.avatarUUID);
   }
 
   logOut(): void {

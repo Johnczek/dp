@@ -1,0 +1,24 @@
+<div class="row my-4">
+  <div class="h1">Aktuálně běžící aukce</div>
+</div>
+
+<div class="row pt-4" *ngIf="items && items.length > 0; else noActiveItems">
+    <div *ngFor="let item of items" class="col-12 col-md-6 col-xl-4 mb-4">
+      <app-item-preview [item]="item"></app-item-preview>
+    </div>
+</div>
+
+<ng-template #noActiveItems>
+  <div class="row mt-4">
+    <div class="col-12 mb-4">
+      <div class="d-flex justify-content-center">
+        <h2><i class="bi bi-emoji-frown"></i></h2>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="d-flex justify-content-center">
+        <h5>Omlouváme se, ale aktuálně neběží žádné aukce. Nechcete jednu <a href="">přidat</a>?</h5>
+      </div>
+    </div>
+  </div>
+</ng-template>

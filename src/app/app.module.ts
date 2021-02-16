@@ -18,6 +18,9 @@ import {AddressComponent} from './account/address/address.component';
 import {AccountGeneralComponent} from './account/account-general/account-general.component';
 import {authInterceptorProviders} from './interceptor/http-interceptor';
 import { AlertComponent } from './alert/alert.component';
+import { ItemListComponent } from './item/item-list/item-list.component';
+import { ItemDetailComponent } from './item/item-detail/item-detail.component';
+import { ItemPreviewComponent } from './item/item-preview/item-preview.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +36,10 @@ import { AlertComponent } from './alert/alert.component';
     BankAccountComponent,
     AddressComponent,
     AccountGeneralComponent,
-    AlertComponent
+    AlertComponent,
+    ItemListComponent,
+    ItemDetailComponent,
+    ItemPreviewComponent
   ],
   imports: [
     BrowserModule,

@@ -5,6 +5,9 @@ import {Subscription} from 'rxjs';
 import {finalize} from 'rxjs/operators';
 import {StrictHttpResponse} from '../../api/strict-http-response';
 import {RegisterRequest} from '../../api/models/register-request';
+import {UserService} from '../../service/user.service';
+import {AlertService} from '../../service/alert.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -21,7 +24,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
 
   registerRequestSubscription: Subscription;
 
-  constructor(public userControllerService: UserControllerService) {
+  constructor(
+    public router: Router,
+    public alertService: AlertService,
+    public userService: UserService,
+    public userControllerService: UserControllerService) {
   }
 
   ngOnDestroy(): void {
@@ -44,10 +51,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
       passwordRepeat: new FormControl('', [Validators.required]),
       description: new FormControl('')
     }, {validators: [this.passwordsMatching]});
-
-    this.registerForm.valueChanges.subscribe(() => {
-      console.log(this.registerForm);
-    });
   }
 
   onRegisterFormSubmit(): void {
@@ -60,12 +63,13 @@ export class RegisterComponent implements OnInit, OnDestroy {
       description: this.registerForm.get('description').value,
     };
 
-    this.registerRequestSubscription = this.userControllerService.register$Response({body: registerRequest})
+    this.registerRequestSubscription = this.userService.register(registerRequest)
       .pipe(
         finalize(() => this.registerFormSubmitting = false),
       )
-      .subscribe((response: StrictHttpResponse<string>) => {
-        // TODO complete register
+      .subscribe(() => {
+        this.alertService.success('Registrace proběhla v pořádku, nyní se můžete přihlásit');
+        this.router.navigate(['/login']);
       });
   }
 

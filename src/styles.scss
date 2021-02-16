@@ -28,3 +28,17 @@ input:required, textarea:required, select:required {
     }
   }
 }
+
+
+.detail-box {
+  padding: .5rem;
+  border: 1px solid $gray-200;
+  max-height: 3rem;
+  display: flex;
+  align-items: center;
+
+  img {
+    max-height: 1.5rem;
+  }
+}
+

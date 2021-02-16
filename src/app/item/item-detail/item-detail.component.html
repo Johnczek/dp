@@ -1,0 +1,129 @@
+<main class="wrapper" *ngIf="item">
+  <div class="row my-4">
+    <div class="col-12">
+      <h2>Nabídka {{item.name}} od prodejce <a href=""
+                                               class="text-decoration-none">{{item.seller.firstName}} {{item.seller.lastName|slice:0:1}}
+        .</a>
+      </h2>
+      <small class="text-muted">ID: {{item.id}} | Vystaveno {{item.validFrom|date:'dd. MM. YYYY v hh:mm'}}</small>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-4 col-12 d-flex justify-content-center mb-lg-0 mb-4">
+              <img [src]="this.fileService.getFileUrlByUUID(item.pictureUUID)"
+                   alt="Obrázek k nabídce {{item.name}}"
+                   class="img-fluid">
+            </div>
+            <div class="col-lg-8 col-12">
+              <div class="ps-2">
+                <div class="row">
+                  <div class="col-sm-6 col-12 mb-3 mb-sm-0">
+                    <div class="row">
+                      <div class="col-12 mb-2">
+                        <strong class="me-2">Aktuální cena</strong>
+                        <h2 class="text-warning mb-1">{{getActualPrice()}} kč</h2>
+                        <div class="text-muted mb-1"><strong class="me-2">Vyvolávací
+                          cena:</strong> {{item.startingPrice}} kč
+                        </div>
+                        <div class="text-muted"><strong class="me-2">Konec aukce:</strong> <span
+                          class="text-danger">{{item.validTo|date:'dd. MM. YYYY v hh:mm'}}</span></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-sm-6 col-12">
+                    <div class="row">
+                      <div class="col-12 mb-2">
+                        <h4 class="text-muted">
+                          Zaujala vás tato nabídka?
+                        </h4>
+                      </div>
+                      <ng-template [ngIf]="item.state === 'ACTIVE' && this.isUserLoggedIn">
+
+                      </ng-template>
+                      <div class="col-12"
+                           *ngIf="item.state === 'ACTIVE' && this.isUserLoggedIn; else notLoggedUserOrInactiveItem">
+                        <div class="input-group mb-3">
+                          <button class="btn btn-outline-primary" type="button" id="bid-button">Přihodit</button>
+                          <input type="number"
+                                 class="form-control"
+                                 placeholder="Hodnota příhozu"
+                                 aria-label="Hodnota příhozu"
+                                 aria-describedby="bid-button"
+                                 [value]="getLowestPossibleBid()"
+                                 [min]="getLowestPossibleBid()">
+                          <span class="input-group-text">kč</span>
+                        </div>
+                      </div>
+
+                      <ng-template #notLoggedUserOrInactiveItem>
+                        <div class="col-12" *ngIf="item.state !== 'ACTIVE'; else notLoggedUser">
+                          <div class="alert alert-info">
+                            Je nám líto, ale tato aukce již <strong>není aktivní</strong>. Prohlédněte si <a
+                            routerLink="/item">jiné aukce</a>.
+                          </div>
+                        </div>
+                      </ng-template>
+
+                      <ng-template #notLoggedUser>
+                        <div class="col-12">
+                          <div class="alert alert-info">
+                            Abyste mohli přihazovat, musíte být <a routerLink="/login">přihlášený</a>.
+                          </div>
+                        </div>
+                      </ng-template>
+                    </div>
+                  </div>
+                </div>
+                <hr>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="row">
+                      <div class="col-md-6 col-12 mb-3 mb-md-0">
+                        <h5>Doprava:</h5>
+                        <div class="detail-box">
+                          <img [src]="this.fileService.getFileUrlByUUID(item.delivery.logoUUID)" class="img-fluid me-2"
+                               alt="Doprava">
+                          {{item.delivery.name}}
+                          <span class=" ms-1 text-muted">
+                            (+{{item.delivery.price}} kč)
+                          </span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 col-12">
+                        <h5>Platba:</h5>
+                        <div class="detail-box">
+                          <img [src]="this.fileService.getFileUrlByUUID(item.payment.logoUUID)" class="img-fluid me-2"
+                               alt="Platba">
+                          {{item.payment.name}}
+                          <span class=" ms-1 text-muted">
+                            (+{{item.payment.price}} kč)
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="row mt-4" *ngIf="item.description">
+    <div class="col-12">
+      <h3>Popis nabídky:</h3>
+    </div>
+    <div class="col-12 mt-3">
+      {{item.description}}
+    </div>
+  </div>
+</main>
