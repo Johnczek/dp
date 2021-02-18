@@ -11,6 +11,10 @@ import {AddressComponent} from './account/address/address.component';
 import {AccountGeneralComponent} from './account/account-general/account-general.component';
 import {ItemListComponent} from './item/item-list/item-list.component';
 import {ItemDetailComponent} from './item/item-detail/item-detail.component';
+import {MyItemComponent} from './account/my-item/my-item.component';
+import {MyAllItemsComponent} from './account/my-item/my-all-items/my-all-items.component';
+import {NewItemComponent} from './account/my-item/new-item/new-item.component';
+import {MyItemEditComponent} from './account/my-item/my-item-edit/my-item-edit.component';
 
 // const appRoutes: Routes = [
 //   { path: '', redirectTo: '/map', pathMatch: 'full'},
@@ -50,6 +54,11 @@ const appRoutes: Routes = [
       { path: 'password', component: ChangePasswordComponent },
       { path: 'bank-account', component: BankAccountComponent },
       { path: 'address', component: AddressComponent },
+      { path: 'auction', component: MyItemComponent, children: [
+          {path: '', component: MyAllItemsComponent},
+          {path: 'create', component: NewItemComponent},
+          {path: ':id/edit', component: MyItemEditComponent}
+        ] },
     ] },
   { path: 'item/:id', component: ItemDetailComponent },
   { path: 'item', component: ItemListComponent },

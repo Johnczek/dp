@@ -4,6 +4,7 @@ import {FileService} from './file.service';
 import {Observable} from 'rxjs';
 import {StrictHttpResponse} from '../api/strict-http-response';
 import {ItemDto} from '../api/models/item-dto';
+import {ItemEditOptionsResponse} from '../api/models/item-edit-options-response';
 
 @Injectable({
   providedIn: 'root'
@@ -21,5 +22,13 @@ export class ItemService {
 
   getItemById(id: number): Observable<StrictHttpResponse<ItemDto>> {
     return this.itemControllerService.getById$Response({id});
+  }
+
+  getItemByIdForEdit(id: number): Observable<StrictHttpResponse<ItemEditOptionsResponse>> {
+    return this.itemControllerService.findByItemIdForEdit$Response({id});
+  }
+
+  getItemsBySellerId(sellerId: number): Observable<StrictHttpResponse<Array<ItemDto>>> {
+    return this.itemControllerService.getAllBySellerId$Response({sellerId});
   }
 }

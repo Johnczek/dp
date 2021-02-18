@@ -12,6 +12,9 @@ export class ItemPreviewComponent implements OnInit {
   @Input()
   item: ItemDto;
 
+  @Input()
+  displayState: 'VIEW' | 'EDIT' = 'VIEW';
+
   constructor(public fileService: FileService) {
   }
 
@@ -19,10 +22,18 @@ export class ItemPreviewComponent implements OnInit {
   }
 
   getActualPriceState(): string {
-    if (this.item.itemHighestBid?.amount !== undefined) {
-      return 'Aktuální cena je <strong>' + this.item.itemHighestBid?.amount + ' kč</strong>';
+
+    const highestPrice =
+      this.item.itemHighestBid?.amount !== undefined ? this.item.itemHighestBid?.amount : this.item.startingPrice;
+
+    if (this.isActive()) {
+      return 'Aktuální cena je <strong>' + highestPrice + ' kč</strong>';
     }
 
-    return 'Vyvolávací cena je <strong>' + this.item.startingPrice + ' kč</strong>';
+    return 'Ukončeno s cenou <strong>' + highestPrice + ' kč</strong>';
+  }
+
+  isActive(): boolean {
+    return this.item.state === 'ACTIVE';
   }
 }

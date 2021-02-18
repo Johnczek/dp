@@ -17,10 +17,14 @@ import {BankAccountComponent} from './account/bank-account/bank-account.componen
 import {AddressComponent} from './account/address/address.component';
 import {AccountGeneralComponent} from './account/account-general/account-general.component';
 import {authInterceptorProviders} from './interceptor/http-interceptor';
-import { AlertComponent } from './alert/alert.component';
-import { ItemListComponent } from './item/item-list/item-list.component';
-import { ItemDetailComponent } from './item/item-detail/item-detail.component';
-import { ItemPreviewComponent } from './item/item-preview/item-preview.component';
+import {AlertComponent} from './alert/alert.component';
+import {ItemListComponent} from './item/item-list/item-list.component';
+import {ItemDetailComponent} from './item/item-detail/item-detail.component';
+import {ItemPreviewComponent} from './item/item-preview/item-preview.component';
+import { MyItemComponent } from './account/my-item/my-item.component';
+import { MyAllItemsComponent } from './account/my-item/my-all-items/my-all-items.component';
+import { MyItemEditComponent } from './account/my-item/my-item-edit/my-item-edit.component';
+import { NewItemComponent } from './account/my-item/new-item/new-item.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +43,11 @@ import { ItemPreviewComponent } from './item/item-preview/item-preview.component
     AlertComponent,
     ItemListComponent,
     ItemDetailComponent,
-    ItemPreviewComponent
+    ItemPreviewComponent,
+    MyItemComponent,
+    MyAllItemsComponent,
+    MyItemEditComponent,
+    NewItemComponent,
   ],
   imports: [
     BrowserModule,

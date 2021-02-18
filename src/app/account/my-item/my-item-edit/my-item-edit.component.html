@@ -1,0 +1,156 @@
+<div class="row">
+  <div class="col-12">
+    <h4 class="mb-3">Úprava aukce {{item.name}}</h4>
+  </div>
+
+  <div class="col-12 mt-4" *ngIf="this.item">
+    <div class="avatar d-flex justify-content-center">
+      <img class="img-fluid" [src]="this.fileService.getFileUrlByUUID(item.pictureUUID)" alt="Obrázek aukce">
+    </div>
+
+    <div class="row">
+      <div class="col-8 mx-auto">
+        <form [formGroup]="itemPictureEditForm" *ngIf="itemPictureEditForm" (ngSubmit)="onItemPictureEditSubmit()">
+          <div class="input-group mt-4">
+            <input type="file"
+                   class="form-control"
+                   id="item-change-picture"
+                   aria-describedby="item-change-picture-button"
+                   aria-label="Upload"
+                   formControlName="avatar"
+                   (change)="validatePicture($event)"
+                   required="required"
+                   [class.is-invalid]="itemPictureEditForm.get('picture').touched && itemPictureEditForm.get('picture').errors"
+                   [class.is-valid]="itemPictureEditForm.get('picture').touched && !itemPictureEditForm.get('picture').errors">
+            <button class="btn btn-primary"
+                    type="submit"
+                    [disabled]="!itemPictureEditForm.valid || itemPictureFormSubmitting"
+                    id="item-change-picture-button">Změnit obrázek
+            </button>
+            <small id="avatar-change-help" class="form-text text-muted">Maximální velikost obrázku jsou 2 MB. Povolené
+              typy souborů jsou <span *ngFor="let i of this.allowedExtensions">.{{i}} </span></small>
+
+            <div class="invalid-feedback"
+                 *ngIf="itemPictureEditForm.get('picture').touched && itemPictureEditForm.get('picture').hasError('required')">
+              Toto pole je povinné
+            </div>
+            <div class="invalid-feedback"
+                 *ngIf="itemPictureEditForm.get('picture').touched && itemPictureEditForm.get('picture').hasError('badSize')">
+              Soubor je větší než 2 MB
+            </div>
+            <div class="invalid-feedback"
+                 *ngIf="itemPictureEditForm.get('picture').touched && itemPictureEditForm.get('picture').hasError('badExtension')">
+              Soubor je v nepodporovaném formátu
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row my-4">
+  <hr class="text-muted">
+</div>
+
+<div class="row">
+  <div class="col-12">
+    <form [formGroup]="itemGeneralEditForm" *ngIf="itemGeneralEditForm" (ngSubmit)="onItemGeneralFormSubmit()">
+
+      <div class="form-floating mb-2">
+        <input type="text"
+               class="form-control"
+               id="item-change-id"
+               placeholder="Id"
+               formControlName="id">
+        <label for="item-change-id">ID</label>
+      </div>
+
+      <div class="form-floating mb-2">
+        <input type="text"
+               class="form-control"
+               id="item-change-state"
+               placeholder="Stav"
+               formControlName="state">
+        <label for="item-change-state">Stav</label>
+      </div>
+
+      <div class="form-floating mb-2">
+        <input type="text"
+               class="form-control"
+               id="item-change-starting-price"
+               placeholder="Stav"
+               formControlName="startingPrice">
+        <label for="item-change-starting-price">Vyvolávací cena</label>
+      </div>
+
+      <div class="form-floating mb-2">
+        <input type="text"
+               class="form-control"
+               id="item-change-name"
+               placeholder="Název"
+               formControlName="name"
+               required="required"
+               [class.is-invalid]="itemGeneralEditForm.get('name').touched && itemGeneralEditForm.get('name').errors"
+               [class.is-valid]="itemGeneralEditForm.get('name').touched && !itemGeneralEditForm.get('name').errors"
+        >
+        <label for="item-change-name">Název</label>
+        <div class="invalid-feedback"
+             *ngIf="itemGeneralEditForm.get('name').touched && itemGeneralEditForm.get('name').hasError('required')">
+          Toto pole je povinné
+        </div>
+      </div>
+
+      <div class="form-floating mb-2">
+        <textarea class="form-control h-auto"
+                  placeholder="Popis nabídky"
+                  id="item-change-description"
+                  formControlName="description"
+                  rows="4"></textarea>
+        <label for="item-change-description">Popis nabídky</label>
+      </div>
+
+      <div class="form-floating mb-2">
+        <input type="date"
+               class="form-control"
+               id="item-change-valid-from"
+               placeholder="Platné od"
+               formControlName="validFrom"
+               required="required"
+               [class.is-invalid]="itemGeneralEditForm.get('validFrom').touched && itemGeneralEditForm.get('validFrom').errors"
+               [class.is-valid]="itemGeneralEditForm.get('validFrom').touched && !itemGeneralEditForm.get('validFrom').errors"
+        >
+        <label for="item-change-valid-from">Platné od</label>
+        <div class="invalid-feedback"
+             *ngIf="itemGeneralEditForm.get('validFrom').touched && itemGeneralEditForm.get('validFrom').hasError('required')">
+          Toto pole je povinné
+        </div>
+      </div>
+
+      <div class="form-floating mb-2">
+        <input type="date"
+               class="form-control"
+               id="item-change-valid-to"
+               placeholder="Platné do"
+               formControlName="validTo"
+               required="required"
+               [class.is-invalid]="itemGeneralEditForm.get('validTo').touched && itemGeneralEditForm.get('validTo').errors"
+               [class.is-valid]="itemGeneralEditForm.get('validTo').touched && !itemGeneralEditForm.get('validTo').errors"
+        >
+        <label for="item-change-valid-to">Platné do</label>
+        <div class="invalid-feedback"
+             *ngIf="itemGeneralEditForm.get('validTo').touched && itemGeneralEditForm.get('validTo').hasError('required')">
+          Toto pole je povinné
+        </div>
+      </div>
+
+
+      <button class="btn btn-lg btn-primary btn-block w-100"
+              type="submit"
+              [disabled]="!itemGeneralEditForm.valid || !itemGeneralEditForm.touched || itemGeneralEditFormSubmitting">
+        Upravit nabídku
+      </button>
+      <small class="text-muted">Pole označená <span class="text-info">tyrkysovým okrajem</span> jsou povinná.</small>
+    </form>
+  </div>
+</div>

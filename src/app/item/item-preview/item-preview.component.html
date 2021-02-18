@@ -1,4 +1,6 @@
-<div class="card h-100">
+<div
+  class="card h-100"
+  [class.active]="isActive()">
   <img [src]="this.fileService.getFileUrlByUUID(item.pictureUUID)" class="card-img-top" alt="{{item.name}}">
   <div class="card-body">
     <h5 class="card-title">{{item.name}}</h5>
@@ -8,6 +10,14 @@
   </div>
   <div class="card-footer d-flex justify-content-between align-items-center">
     <small class="text-muted" [innerHTML]="getActualPriceState()"></small>
-    <div class="btn btn-primary" [routerLink]="['/item', item.id]">Zobrazit detail</div>
+    <div [ngSwitch]="displayState">
+      <div class="btn btn-primary"
+           [class.disabled]="!isActive()"
+           *ngSwitchCase="'EDIT'"
+           [routerLink]="['/account/auction', item.id, 'edit']">Upravit</div>
+      <div class="btn btn-primary"
+           *ngSwitchDefault
+           [routerLink]="['/item', item.id]">Zobrazit detail</div>
+    </div>
   </div>
 </div>
