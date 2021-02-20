@@ -75,10 +75,10 @@ export class AlertComponent implements OnInit, OnDestroy {
 
     const classes = ['alert', 'alert-dismissable'];
     const alertTypeClass = {
-      [AlertType.Success]: 'alert-success',
-      [AlertType.Error]: 'alert-danger',
-      [AlertType.Info]: 'alert-info',
-      [AlertType.Warning]: 'alert-warning'
+      [AlertType.SUCCESS]: 'alert-success',
+      [AlertType.ERROR]: 'alert-danger',
+      [AlertType.INFO]: 'alert-info',
+      [AlertType.WARNING]: 'alert-warning'
     };
 
     classes.push(alertTypeClass[alert.type]);

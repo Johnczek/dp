@@ -43,9 +43,9 @@ export class MyItemEditComponent implements OnInit, OnDestroy {
 
   itemPaymentChangeSubscription: Subscription;
 
-  itemId: number;
-
   item: ItemDto;
+
+  itemId: number;
 
   deliveries: Array<DeliveryDto>;
 
@@ -104,24 +104,24 @@ export class MyItemEditComponent implements OnInit, OnDestroy {
   initGeneralEditForm(): void {
     this.itemGeneralEditForm = new FormGroup({
       id: new FormControl({value: this.item.id, disabled: true}),
-      state: new FormControl({value: this.item.state, disabled: true}),
+      state: new FormControl({value: this.itemService.translateItemState(this.item.state), disabled: true}),
       startingPrice: new FormControl({value: this.item.startingPrice, disabled: true}),
       name: new FormControl(this.item.name, [Validators.required]),
       description: new FormControl(this.item.description),
-      validFrom: new FormControl(this.item.validFrom, [Validators.required]),
-      validTo: new FormControl(this.item.validTo, [Validators.required]),
+      validFrom: new FormControl(this.getDateInISOFormat(this.item.validFrom), [Validators.required]),
+      validTo: new FormControl(this.getDateInISOFormat(this.item.validTo), [Validators.required]),
     });
   }
 
   initPaymentChangeForm(): void {
     this.itemPaymentChangeForm = new FormGroup({
-      id: new FormControl({value: this.item.payment.id}),
+      id: new FormControl({value: this.item.payment.id}, [Validators.required]),
     });
   }
 
   initDeliveryChangeForm(): void {
-    this.itemPaymentChangeForm = new FormGroup({
-      id: new FormControl({value: this.item.payment.id}),
+    this.itemDeliveryChangeForm = new FormGroup({
+      id: new FormControl({value: this.item.delivery.id}, [Validators.required]),
     });
   }
 
@@ -134,10 +134,39 @@ export class MyItemEditComponent implements OnInit, OnDestroy {
   }
 
   cancelItem(): void {
+    if (confirm('Opravdu si přejete zrušit tuto aukci?')) {
+      this.itemService.cancelItem(this.item.id).subscribe(() => {
+        this.alertService.success('Nabídka byla úspěšně zrušena');
+        this.item.state = 'CANCELLED';
+        this.itemGeneralEditForm.patchValue({state: this.itemService.translateItemState(this.item.state)});
+      });
+    }
+  }
+
+  onItemGeneralFormSubmit(): void {
 
   }
 
-  onItemGeneralFormSubmit() {
-
+  onItemDeliveryChangeFormSubmit(): void {
+    this.itemService.changeItemDelivery(this.item.id, this.itemDeliveryChangeForm.get('id').value)
+      .subscribe(() => {
+        this.alertService.success('Metoda dopravy byla úspěšně změněna');
+      });
   }
+
+  onItemPaymentChangeFormSubmit(): void {
+    this.itemService.changeItemPayment(this.item.id, this.itemPaymentChangeForm.get('id').value)
+      .subscribe(() => {
+        this.alertService.success('Metoda platby byla úspěšně změněna');
+      });
+  }
+
+  getDateInISOFormat(date: any): string {
+    return new Date(date).toISOString().substring(0, 16);
+  }
+
+  getCurrentDateInISOFormat(): string {
+    return this.getDateInISOFormat(Date.now());
+  }
+
 }

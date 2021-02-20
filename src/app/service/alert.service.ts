@@ -25,7 +25,7 @@ export class AlertService {
       options = DEFAULT_ALERT_OPTIONS;
     }
 
-    this.alert(new Alert({...options, type: AlertType.Success, message}));
+    this.alert(new Alert({...options, type: AlertType.SUCCESS, message}));
   }
 
   error(message: string, options?: any): void {
@@ -34,7 +34,7 @@ export class AlertService {
       options = DEFAULT_ALERT_OPTIONS;
     }
 
-    this.alert(new Alert({...options, type: AlertType.Error, message}));
+    this.alert(new Alert({...options, type: AlertType.ERROR, message}));
   }
 
   info(message: string, options?: any): void {
@@ -43,7 +43,7 @@ export class AlertService {
       options = DEFAULT_ALERT_OPTIONS;
     }
 
-    this.alert(new Alert({...options, type: AlertType.Info, message}));
+    this.alert(new Alert({...options, type: AlertType.INFO, message}));
   }
 
   warn(message: string, options?: any): void {
@@ -52,7 +52,7 @@ export class AlertService {
       options = DEFAULT_ALERT_OPTIONS;
     }
 
-    this.alert(new Alert({...options, type: AlertType.Warning, message}));
+    this.alert(new Alert({...options, type: AlertType.WARNING, message}));
   }
 
   alert(alert: Alert): void {

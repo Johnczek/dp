@@ -25,12 +25,13 @@
                   <div class="col-sm-6 col-12 mb-3 mb-sm-0">
                     <div class="row">
                       <div class="col-12 mb-2">
-                        <strong class="me-2">Aktuální cena</strong>
+                        <strong class="me-2" *ngIf="item.state === 'ACTIVE'">Aktuální cena</strong>
+                        <strong class="me-2" *ngIf="item.state !== 'ACTIVE'">Cena</strong>
                         <h2 class="text-warning mb-1">{{getActualPrice()}} kč</h2>
                         <div class="text-muted mb-1"><strong class="me-2">Vyvolávací
                           cena:</strong> {{item.startingPrice}} kč
                         </div>
-                        <div class="text-muted"><strong class="me-2">Konec aukce:</strong> <span
+                        <div class="text-muted" *ngIf="item.state === 'ACTIVE'"><strong class="me-2">Konec aukce:</strong> <span
                           class="text-danger">{{item.validTo|date:'dd. MM. YYYY v hh:mm'}}</span></div>
                       </div>
                     </div>

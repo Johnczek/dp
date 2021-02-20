@@ -1,9 +1,10 @@
-<div class="row">
+<div class="row" *ngIf="this.item">
   <div class="col-12">
-    <h4 class="mb-3">Úprava aukce {{item.name}}</h4>
+    <h4 class="mb-3">Úprava aukce {{item?.name}}</h4>
   </div>
 
-  <div class="col-12 mt-4" *ngIf="this.item">
+  <div class="col-12 mt-4"
+       *ngIf="this.itemPictureEditForm">
     <div class="avatar d-flex justify-content-center">
       <img class="img-fluid" [src]="this.fileService.getFileUrlByUUID(item.pictureUUID)" alt="Obrázek aukce">
     </div>
@@ -17,7 +18,7 @@
                    id="item-change-picture"
                    aria-describedby="item-change-picture-button"
                    aria-label="Upload"
-                   formControlName="avatar"
+                   formControlName="picture"
                    (change)="validatePicture($event)"
                    required="required"
                    [class.is-invalid]="itemPictureEditForm.get('picture').touched && itemPictureEditForm.get('picture').errors"
@@ -27,7 +28,7 @@
                     [disabled]="!itemPictureEditForm.valid || itemPictureFormSubmitting"
                     id="item-change-picture-button">Změnit obrázek
             </button>
-            <small id="avatar-change-help" class="form-text text-muted">Maximální velikost obrázku jsou 2 MB. Povolené
+            <small id="picture-change-help" class="form-text text-muted">Maximální velikost obrázku jsou 2 MB. Povolené
               typy souborů jsou <span *ngFor="let i of this.allowedExtensions">.{{i}} </span></small>
 
             <div class="invalid-feedback"
@@ -66,13 +67,21 @@
         <label for="item-change-id">ID</label>
       </div>
 
-      <div class="form-floating mb-2">
-        <input type="text"
-               class="form-control"
-               id="item-change-state"
-               placeholder="Stav"
-               formControlName="state">
-        <label for="item-change-state">Stav</label>
+      <div class="input-group mb-2">
+        <div class="form-floating"
+             [class.w-100]="item.state !== 'ACTIVE'"
+             [class.w-75]="item.state === 'ACTIVE'">
+          <input type="text"
+                 class="form-control"
+                 id="item-change-state"
+                 placeholder="Stav"
+                 formControlName="state">
+          <label for="item-change-state">Stav</label>
+        </div>
+        <button *ngIf="item.state === 'ACTIVE'"
+                (click)="cancelItem()"
+                class="btn btn-danger w-25"
+                type="button">Zrušit nabídku</button>
       </div>
 
       <div class="form-floating mb-2">
@@ -111,12 +120,14 @@
       </div>
 
       <div class="form-floating mb-2">
-        <input type="date"
+        <input type="datetime-local"
                class="form-control"
                id="item-change-valid-from"
                placeholder="Platné od"
                formControlName="validFrom"
                required="required"
+               [min]="getCurrentDateInISOFormat()"
+               [max]="getDateInISOFormat(itemGeneralEditForm.get('validTo').value)"
                [class.is-invalid]="itemGeneralEditForm.get('validFrom').touched && itemGeneralEditForm.get('validFrom').errors"
                [class.is-valid]="itemGeneralEditForm.get('validFrom').touched && !itemGeneralEditForm.get('validFrom').errors"
         >
@@ -128,12 +139,13 @@
       </div>
 
       <div class="form-floating mb-2">
-        <input type="date"
+        <input type="datetime-local"
                class="form-control"
                id="item-change-valid-to"
                placeholder="Platné do"
                formControlName="validTo"
                required="required"
+               [min]="getDateInISOFormat(itemGeneralEditForm.get('validFrom').value)"
                [class.is-invalid]="itemGeneralEditForm.get('validTo').touched && itemGeneralEditForm.get('validTo').errors"
                [class.is-valid]="itemGeneralEditForm.get('validTo').touched && !itemGeneralEditForm.get('validTo').errors"
         >
@@ -151,6 +163,79 @@
         Upravit nabídku
       </button>
       <small class="text-muted">Pole označená <span class="text-info">tyrkysovým okrajem</span> jsou povinná.</small>
+    </form>
+  </div>
+</div>
+
+<hr class="my-5">
+<div class="row">
+  <div class="col-12">
+    <h4 class="mb-3">Výběr dopravy</h4>
+    <form [formGroup]="itemDeliveryChangeForm" *ngIf="itemDeliveryChangeForm"
+          (ngSubmit)="onItemDeliveryChangeFormSubmit()">
+
+      <div class="form-floating input-group">
+        <select class="form-select"
+                formControlName="id"
+                [class.is-invalid]="itemDeliveryChangeForm.get('id').touched && itemDeliveryChangeForm.get('id').errors"
+                [class.is-valid]="itemDeliveryChangeForm.get('id').touched && !itemDeliveryChangeForm.get('id').errors"
+                [(ngModel)]="item.delivery.id"
+                id="item-change-delivery"
+                aria-label="Doprava">
+          <option selected *ngIf="!item.delivery">Vyberte dopravu</option>
+          <option class="p-1" *ngFor="let delivery of deliveries"
+                  [value]="delivery.id"
+                  [ngValue]="delivery.id"
+                  [selected]="delivery.id == item.delivery.id">
+              {{delivery.name}} (+{{delivery.price}} kč)
+          </option>
+        </select>
+        <label for="item-change-delivery">Doprava</label>
+        <button class="btn btn-primary"
+                type="submit"
+                [disabled]="!itemDeliveryChangeForm.valid || !itemDeliveryChangeForm.touched">
+          Změnit</button>
+
+        <div class="invalid-feedback"
+             *ngIf="itemDeliveryChangeForm.get('id').touched && itemDeliveryChangeForm.get('id').hasError('required')">
+          Toto pole je povinné
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="col-12 mt-5">
+    <h4 class="mb-3">Výběr platby</h4>
+    <form [formGroup]="itemPaymentChangeForm" *ngIf="itemPaymentChangeForm"
+          (ngSubmit)="onItemPaymentChangeFormSubmit()">
+
+      <div class="form-floating input-group">
+        <select class="form-select"
+                formControlName="id"
+                [(ngModel)]="item.payment.id"
+                [class.is-invalid]="itemPaymentChangeForm.get('id').touched && itemPaymentChangeForm.get('id').errors"
+                [class.is-valid]="itemPaymentChangeForm.get('id').touched && !itemPaymentChangeForm.get('id').errors"
+                id="item-change-payment"
+                aria-label="Platba">
+          <option selected *ngIf="!item.delivery">Vyberte platbu</option>
+          <option class="p-1" *ngFor="let payment of payments"
+                  [value]="payment.id"
+                  [ngValue]="payment.id"
+                  [selected]="payment.id == item.payment.id">
+            {{payment.name}} (+{{payment.price}} kč)
+          </option>
+        </select>
+        <label for="item-change-payment">Platba</label>
+        <button class="btn btn-primary"
+                type="submit"
+                [disabled]="!itemPaymentChangeForm.valid || !itemPaymentChangeForm.touched">
+          Změnit</button>
+
+        <div class="invalid-feedback"
+             *ngIf="itemPaymentChangeForm.get('id').touched && itemPaymentChangeForm.get('id').hasError('required')">
+          Toto pole je povinné
+        </div>
+      </div>
     </form>
   </div>
 </div>
