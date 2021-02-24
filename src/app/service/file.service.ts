@@ -1,12 +1,18 @@
 import { Injectable } from '@angular/core';
 import {environment} from '../../environments/environment.prod';
+import {Observable} from 'rxjs';
+import {StrictHttpResponse} from '../api/strict-http-response';
+import {FileControllerService} from '../api/services/file-controller.service';
+import {FileUploadResponse} from '../api/models/file-upload-response';
 
 @Injectable({
   providedIn: 'root'
 })
 export class FileService {
 
-  constructor() { }
+  constructor(
+    public fileControllerService: FileControllerService
+  ) { }
 
   getFileUrlByUUID(uuid: string): string {
     return environment.API_IMAGE_URL + uuid;
@@ -18,6 +24,15 @@ export class FileService {
     }
 
     return this.getFileUrlByUUID(uuid);
+  }
+
+  uploadFile(fileType: 'USER_AVATAR' | 'UNKNOWN' | 'DELIVERY_LOGO' | 'PAYMENT_LOGO' | 'ITEM_PICTURE', file: Blob): Observable<StrictHttpResponse<FileUploadResponse>> {
+    return this.fileControllerService.uploadFile$Response({
+      fileType,
+      body: {
+        file,
+      },
+    });
   }
 
   /**

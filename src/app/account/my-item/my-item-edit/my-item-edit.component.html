@@ -6,7 +6,7 @@
   <div class="col-12 mt-4"
        *ngIf="this.itemPictureEditForm">
     <div class="avatar d-flex justify-content-center">
-      <img class="img-fluid" [src]="this.fileService.getFileUrlByUUID(item.pictureUUID)" alt="Obrázek aukce">
+      <img class="img-fluid" [src]="itemPictureUrl" alt="Obrázek aukce">
     </div>
 
     <div class="row">
@@ -160,7 +160,7 @@
       <button class="btn btn-lg btn-primary btn-block w-100"
               type="submit"
               [disabled]="!itemGeneralEditForm.valid || !itemGeneralEditForm.touched || itemGeneralEditFormSubmitting">
-        Upravit nabídku
+        Upravit aukci
       </button>
       <small class="text-muted">Pole označená <span class="text-info">tyrkysovým okrajem</span> jsou povinná.</small>
     </form>
@@ -193,7 +193,7 @@
         <label for="item-change-delivery">Doprava</label>
         <button class="btn btn-primary"
                 type="submit"
-                [disabled]="!itemDeliveryChangeForm.valid || !itemDeliveryChangeForm.touched">
+                [disabled]="!itemDeliveryChangeForm.valid || !itemDeliveryChangeForm.touched || itemDeliveryChangeFormSubmitting">
           Změnit</button>
 
         <div class="invalid-feedback"
@@ -228,7 +228,7 @@
         <label for="item-change-payment">Platba</label>
         <button class="btn btn-primary"
                 type="submit"
-                [disabled]="!itemPaymentChangeForm.valid || !itemPaymentChangeForm.touched">
+                [disabled]="!itemPaymentChangeForm.valid || !itemPaymentChangeForm.touched || itemPaymentChangeFormSubmitting">
           Změnit</button>
 
         <div class="invalid-feedback"

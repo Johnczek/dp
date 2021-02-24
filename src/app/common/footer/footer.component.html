@@ -22,21 +22,18 @@
       <div class="col-6 col-md">
         <h5>Kam dál</h5>
         <ul class="list-unstyled text-small">
-          <li><a class="link-secondary" href="#">Cool stuff</a></li>
-          <li><a class="link-secondary" href="#">Random feature</a></li>
-          <li><a class="link-secondary" href="#">Team feature</a></li>
-          <li><a class="link-secondary" href="#">Stuff for developers</a></li>
-          <li><a class="link-secondary" href="#">Another one</a></li>
-          <li><a class="link-secondary" href="#">Last time</a></li>
+          <li><a class="link-secondary" href="https://mendelu.cz/">Mendelu</a></li>
+          <li><a class="link-secondary" href="https://www.pef.mendelu.cz/">PEF Mendelu</a></li>
+          <li><a class="link-secondary" href="https://is.mendelu.cz/">IS Mendelu</a></li>
         </ul>
       </div>
       <div class="col-6 col-md">
         <h5>Užitečné odkazy</h5>
         <ul class="list-unstyled text-small">
-          <li><a class="link-secondary" href="#">Team</a></li>
-          <li><a class="link-secondary" href="#">Locations</a></li>
-          <li><a class="link-secondary" href="#">Privacy</a></li>
-          <li><a class="link-secondary" href="#">Terms</a></li>
+          <li><a class="link-secondary" routerLink="/item">Aukce</a></li>
+          <li><a class="link-secondary" routerLink="/login" *ngIf="!userService.isUserLoggedIn()">Přihlášení</a></li>
+          <li><a class="link-secondary" routerLink="/register" *ngIf="!userService.isUserLoggedIn()">Registrace</a></li>
+          <li><a class="link-secondary" href="#" (click)="userService.logOut()" *ngIf="userService.isUserLoggedIn()">Odhlásit se</a></li>
         </ul>
       </div>
     </div>

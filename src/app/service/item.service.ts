@@ -1,10 +1,14 @@
 import {Injectable} from '@angular/core';
 import {ItemControllerService} from '../api/services/item-controller.service';
 import {FileService} from './file.service';
-import {Observable} from 'rxjs';
+import {Observable, of} from 'rxjs';
 import {StrictHttpResponse} from '../api/strict-http-response';
 import {ItemDto} from '../api/models/item-dto';
 import {ItemEditOptionsResponse} from '../api/models/item-edit-options-response';
+import {ItemChangeRequest} from '../api/models/item-change-request';
+import {catchError, mergeMap, tap} from 'rxjs/operators';
+import {FileUploadResponse} from '../api/models/file-upload-response';
+import {ItemCreationOptionsResponse} from '../api/models/item-creation-options-response';
 
 @Injectable({
   providedIn: 'root'
@@ -69,6 +73,37 @@ export class ItemService {
 
   changeItemPayment(itemId: number, paymentId: number): Observable<StrictHttpResponse<string>> {
     return this.itemControllerService.changeItemPaymentMethod$Response({id: itemId, body: {paymentId}});
+  }
+
+  changeItemGeneral(itemId: number, data: ItemChangeRequest): Observable<StrictHttpResponse<ItemDto>> {
+    return this.itemControllerService.editById$Response({id: itemId, body: data});
+  }
+
+  updateItemPicture(itemId: number, picture: Blob): Observable<string> {
+
+    let pictureUUID: string;
+
+    return new Observable<string>((observer) => {
+      this.fileService.uploadFile('ITEM_PICTURE', picture)
+        .pipe(
+          mergeMap(
+            (firstResponse: StrictHttpResponse<FileUploadResponse>) => {
+              pictureUUID = firstResponse.body.fileUUID;
+
+              return this.itemControllerService.changeItemPictureMethod$Response({id: itemId, body: {pictureUUID}});
+            }
+          ),
+          tap(() => {
+            observer.next(pictureUUID);
+          }),
+          catchError((err: any) => of(err))
+        )
+        .subscribe();
+    });
+  }
+
+  getItemCreationOptions(): Observable<StrictHttpResponse<ItemCreationOptionsResponse>> {
+    return this.itemControllerService.getCreationOptions$Response();
   }
 
   translateItemState(state: string): string {

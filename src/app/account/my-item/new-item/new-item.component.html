@@ -1,1 +1,172 @@
-<p>new-item works!</p>
+<div class="row" *ngIf="itemCreateForm">
+  <div class="col-12">
+    <h4 class="mb-3">Vytvoření nové aukce</h4>
+  </div>
+
+
+    <form [formGroup]="itemCreateForm" (ngSubmit)="onItemCreateFormSubmit()" class="mt-4">
+
+      <div class="mb-2">
+        <label for="new-item-picture" class="form-label">Obrázek aukce</label>
+        <input type="file"
+               class="form-control"
+               id="new-item-picture"
+               aria-describedby="item-change-picture-button"
+               aria-label="Upload"
+               formControlName="picture"
+               (change)="validatePicture($event)"
+               required="required"
+               [class.is-invalid]="itemCreateForm.get('picture').touched && itemCreateForm.get('picture').errors"
+               [class.is-valid]="itemCreateForm.get('picture').touched && !itemCreateForm.get('picture').errors">
+        <small id="picture-change-help" class="form-text text-muted">Maximální velikost obrázku jsou 2 MB. Povolené
+          typy souborů jsou <span *ngFor="let i of this.allowedExtensions">.{{i}} </span></small>
+
+        <div class="invalid-feedback"
+             *ngIf="itemCreateForm.get('picture').touched && itemCreateForm.get('picture').hasError('required')">
+          Toto pole je povinné
+        </div>
+        <div class="invalid-feedback"
+             *ngIf="itemCreateForm.get('picture').touched && itemCreateForm.get('picture').hasError('badSize')">
+          Soubor je větší než 2 MB
+        </div>
+        <div class="invalid-feedback"
+             *ngIf="itemCreateForm.get('picture').touched && itemCreateForm.get('picture').hasError('badExtension')">
+          Soubor je v nepodporovaném formátu
+        </div>
+      </div>
+
+        <div class="form-floating mb-2">
+          <input type="text"
+                 class="form-control"
+                 id="new-item-name"
+                 placeholder="Název"
+                 formControlName="name"
+                 required="required"
+                 [class.is-invalid]="itemCreateForm.get('name').touched && itemCreateForm.get('name').errors"
+                 [class.is-valid]="itemCreateForm.get('name').touched && !itemCreateForm.get('name').errors"
+          >
+          <label for="new-item-name">Název</label>
+          <div class="invalid-feedback"
+               *ngIf="itemCreateForm.get('name').touched && itemCreateForm.get('name').hasError('required')">
+            Toto pole je povinné
+          </div>
+        </div>
+
+        <div class="form-floating mb-2">
+          <input type="text"
+                 class="form-control"
+                 id="new-item-starting-price"
+                 placeholder="Vyvolávací cena"
+                 required="required"
+                 formControlName="startingPrice"
+                 [class.is-invalid]="itemCreateForm.get('startingPrice').touched && itemCreateForm.get('startingPrice').errors"
+                 [class.is-valid]="itemCreateForm.get('startingPrice').touched && !itemCreateForm.get('startingPrice').errors">
+          <label for="new-item-starting-price">Vyvolávací cena</label>
+          <div class="invalid-feedback"
+               *ngIf="itemCreateForm.get('startingPrice').touched && itemCreateForm.get('startingPrice').hasError('required')">
+            Toto pole je povinné
+          </div>
+          <div class="invalid-feedback"
+               *ngIf="itemCreateForm.get('startingPrice').touched && itemCreateForm.get('startingPrice').hasError('min')">
+            Minimální hodnota je 1
+          </div>
+        </div>
+
+
+        <div class="form-floating mb-2">
+        <textarea class="form-control h-auto"
+                  placeholder="Popis nabídky"
+                  id="new-item-description"
+                  formControlName="description"
+                  rows="4"></textarea>
+          <label for="new-item-description">Popis nabídky</label>
+        </div>
+
+        <div class="form-floating mb-2">
+          <input type="datetime-local"
+                 class="form-control"
+                 id="new-item-valid-from"
+                 placeholder="Platné od"
+                 formControlName="validFrom"
+                 required="required"
+                 [min]="getCurrentDateInISOFormat()"
+                 [class.is-invalid]="itemCreateForm.get('validFrom').touched && itemCreateForm.get('validFrom').errors"
+                 [class.is-valid]="itemCreateForm.get('validFrom').touched && !itemCreateForm.get('validFrom').errors"
+          >
+          <label for="new-item-valid-from">Platné od</label>
+          <div class="invalid-feedback"
+               *ngIf="itemCreateForm.get('validFrom').touched && itemCreateForm.get('validFrom').hasError('required')">
+            Toto pole je povinné
+          </div>
+        </div>
+
+        <div class="form-floating mb-2">
+          <input type="datetime-local"
+                 class="form-control"
+                 id="new-item-valid-to"
+                 placeholder="Platné do"
+                 formControlName="validTo"
+                 required="required"
+                 [class.is-invalid]="itemCreateForm.get('validTo').touched && itemCreateForm.get('validTo').errors"
+                 [class.is-valid]="itemCreateForm.get('validTo').touched && !itemCreateForm.get('validTo').errors"
+          >
+          <label for="new-item-valid-to">Platné do</label>
+          <div class="invalid-feedback"
+               *ngIf="itemCreateForm.get('validTo').touched && itemCreateForm.get('validTo').hasError('required')">
+            Toto pole je povinné
+          </div>
+        </div>
+
+        <div class="form-floating input-group mb-2">
+          <select class="form-select"
+                  formControlName="paymentId"
+                  [class.is-invalid]="itemCreateForm.get('paymentId').touched && itemCreateForm.get('paymentId').errors"
+                  [class.is-valid]="itemCreateForm.get('paymentId').touched && !itemCreateForm.get('paymentId').errors"
+                  id="item-change-payment"
+                  required="required"
+                  aria-label="Platba">
+            <option class="p-1" *ngFor="let payment of payments"
+                    [value]="payment.id"
+                    [ngValue]="payment.id">
+              {{payment.name}} (+{{payment.price}} kč)
+            </option>
+          </select>
+          <label for="item-change-payment">Platba</label>
+
+          <div class="invalid-feedback"
+               *ngIf="itemCreateForm.get('paymentId').touched && itemCreateForm.get('paymentId').hasError('required')">
+            Toto pole je povinné
+          </div>
+        </div>
+
+        <div class="form-floating input-group mb-2">
+          <select class="form-select"
+                  formControlName="deliveryId"
+                  [class.is-invalid]="itemCreateForm.get('deliveryId').touched && itemCreateForm.get('deliveryId').errors"
+                  [class.is-valid]="itemCreateForm.get('deliveryId').touched && !itemCreateForm.get('deliveryId').errors"
+                  id="item-change-delivery"
+                  required="required"
+                  aria-label="Platba">
+            <option class="p-1" *ngFor="let develiry of deliveries"
+                    [value]="develiry.id"
+                    [ngValue]="develiry.id">
+              {{develiry.name}} (+{{develiry.price}} kč)
+            </option>
+          </select>
+          <label for="item-change-delivery">Doprava</label>
+
+          <div class="invalid-feedback"
+               *ngIf="itemCreateForm.get('deliveryId').touched && itemCreateForm.get('deliveryId').hasError('required')">
+            Toto pole je povinné
+          </div>
+        </div>
+
+
+        <button class="btn btn-lg btn-primary btn-block w-100"
+                type="submit"
+                [disabled]="!itemCreateForm.valid || !itemCreateForm.touched || itemCreateFormSubmitting">
+          Vytvořit aukci
+        </button>
+        <small class="text-muted">Pole označená <span class="text-info">tyrkysovým okrajem</span> jsou povinná.</small>
+    </form>
+  </div>

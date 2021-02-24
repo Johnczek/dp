@@ -11,6 +11,8 @@ import {StrictHttpResponse} from '../../../api/strict-http-response';
 import {ItemEditOptionsResponse} from '../../../api/models/item-edit-options-response';
 import {AlertService} from '../../../service/alert.service';
 import {ENABLED_IMAGE_FORMATS} from '../../../globals';
+import {ItemChangeRequest} from '../../../api/models/item-change-request';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-my-item-edit',
@@ -47,9 +49,14 @@ export class MyItemEditComponent implements OnInit, OnDestroy {
 
   itemId: number;
 
+  pictureBase64: Blob;
+
+  itemPictureUrl;
+
   deliveries: Array<DeliveryDto>;
 
   payments: Array<PaymentDto>;
+
 
   allowedExtensions = ENABLED_IMAGE_FORMATS;
 
@@ -83,15 +90,22 @@ export class MyItemEditComponent implements OnInit, OnDestroy {
 
       this.itemService.getItemByIdForEdit(this.itemId)
         .subscribe((response: StrictHttpResponse<ItemEditOptionsResponse>) => {
-        this.item = response.body.item;
-        this.deliveries = response.body.deliveries;
-        this.payments = response.body.payments;
+          this.item = response.body.item;
 
-        this.initPictureChangeForm();
-        this.initGeneralEditForm();
-        this.initPaymentChangeForm();
-        this.initDeliveryChangeForm();
-      });
+          if (this.item?.state !== 'ACTIVE') {
+            this.alertService.error('Nelze upravovat neaktivní nabídku');
+            this.router.navigate(['/account/auction']);
+          }
+
+          this.deliveries = response.body.deliveries;
+          this.payments = response.body.payments;
+          this.itemPictureUrl = this.fileService.getFileUrlByUUID(this.item.pictureUUID);
+
+          this.initPictureChangeForm();
+          this.initGeneralEditForm();
+          this.initPaymentChangeForm();
+          this.initDeliveryChangeForm();
+        });
     });
   }
 
@@ -127,10 +141,40 @@ export class MyItemEditComponent implements OnInit, OnDestroy {
 
   onItemPictureEditSubmit(): void {
 
+    this.itemPictureFormSubmitting = true;
+
+    this.itemPictureUpdateSubscription = this.itemService.updateItemPicture(this.itemId, this.pictureBase64)
+      .pipe(
+        finalize(() => {
+          this.itemPictureEditForm.reset();
+          this.itemPictureFormSubmitting = false;
+        })
+      )
+      .subscribe((reponse: string) => {
+          this.alertService.success('Obrázek byl úspěšně změněn');
+          this.itemPictureUrl = this.fileService.getFileUrlByUUID(reponse);
+      });
   }
 
-  validatePicture($event: Event): void {
+  validatePicture(event: any): void {
+    this.itemPictureEditForm.get('picture').setErrors(null);
+    const reader = new FileReader();
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        if (file.size > 2000000) {
+          this.itemPictureEditForm.get('picture').setErrors({badSize: true});
+        } else {
 
+          const fileExt = file.name.split('.').pop();
+          if (ENABLED_IMAGE_FORMATS.indexOf(fileExt) === -1) {
+            this.itemPictureEditForm.get('picture').setErrors({badExtension: true});
+          }
+          this.pictureBase64 = this.fileService.convertBase64ToBlob(reader.result as string);
+        }
+      };
+    }
   }
 
   cancelItem(): void {
@@ -145,17 +189,45 @@ export class MyItemEditComponent implements OnInit, OnDestroy {
 
   onItemGeneralFormSubmit(): void {
 
+    this.itemGeneralEditFormSubmitting = true;
+
+    const data: ItemChangeRequest = {
+      description: this.itemGeneralEditForm.get('description').value,
+      name: this.itemGeneralEditForm.get('name').value,
+      validFrom: this.itemGeneralEditForm.get('validFrom').value,
+      validTo: this.itemGeneralEditForm.get('validTo').value,
+    };
+
+    this.itemGeneralChangeSubscription = this.itemService.changeItemGeneral(this.itemId, data)
+      .pipe(
+        finalize(() => this.itemGeneralEditFormSubmitting = false)
+      )
+      .subscribe(() => {
+        this.alertService.success('Aukce byla úspěšně změněna');
+      });
   }
 
   onItemDeliveryChangeFormSubmit(): void {
-    this.itemService.changeItemDelivery(this.item.id, this.itemDeliveryChangeForm.get('id').value)
+
+    this.itemDeliveryChangeFormSubmitting = true;
+
+    this.itemDeliveryChangeSubscription = this.itemService.changeItemDelivery(this.item.id, this.itemDeliveryChangeForm.get('id').value)
+      .pipe(
+        finalize(() => this.itemDeliveryChangeFormSubmitting = false)
+      )
       .subscribe(() => {
         this.alertService.success('Metoda dopravy byla úspěšně změněna');
       });
   }
 
   onItemPaymentChangeFormSubmit(): void {
-    this.itemService.changeItemPayment(this.item.id, this.itemPaymentChangeForm.get('id').value)
+
+    this.itemPaymentChangeFormSubmitting = true;
+
+    this.itemPaymentChangeSubscription = this.itemService.changeItemPayment(this.item.id, this.itemPaymentChangeForm.get('id').value)
+      .pipe(
+        finalize(() => this.itemPaymentChangeFormSubmitting = false)
+      )
       .subscribe(() => {
         this.alertService.success('Metoda platby byla úspěšně změněna');
       });
