@@ -1,7 +1,7 @@
 <main class="wrapper" *ngIf="item">
   <div class="row my-4">
     <div class="col-12">
-      <h2>Nabídka {{item.name}} od prodejce <a href=""
+      <h2>Nabídka {{item.name}} od prodejce <a [routerLink]="['/', 'user-profile', item.seller.id]"
                                                class="text-decoration-none">{{item.seller.firstName}} {{item.seller.lastName|slice:0:1}}
         </a>.
       </h2>
@@ -38,26 +38,25 @@
                   </div>
                   <div class="col-sm-6 col-12">
                     <div class="row">
-                      <div class="col-12 mb-2">
-                        <h4 class="text-muted">
-                          Zaujala vás tato nabídka?
-                        </h4>
-                      </div>
-                      <ng-template [ngIf]="item.state === 'ACTIVE' && this.isUserLoggedIn">
-
-                      </ng-template>
-                      <div class="col-12"
-                           *ngIf="item.state === 'ACTIVE' && this.isUserLoggedIn; else notLoggedUserOrInactiveItem">
-                        <div class="input-group mb-3">
-                          <button class="btn btn-outline-primary" type="button" id="bid-button">Přihodit</button>
-                          <input type="number"
-                                 class="form-control"
-                                 placeholder="Hodnota příhozu"
-                                 aria-label="Hodnota příhozu"
-                                 aria-describedby="bid-button"
-                                 [value]="getLowestPossibleBid()"
-                                 [min]="getLowestPossibleBid()">
-                          <span class="input-group-text">kč</span>
+                      <div>
+                        <div class="col-12 mb-2">
+                          <h4 class="text-muted">
+                            Zaujala vás tato nabídka?
+                          </h4>
+                        </div>
+                        <div class="col-12"
+                             *ngIf="item.state === 'ACTIVE' && this.loggedUser != null; else notLoggedUserOrInactiveItem">
+                          <div class="input-group mb-3">
+                            <button class="btn btn-outline-primary" type="button" id="bid-button">Přihodit</button>
+                            <input type="number"
+                                   class="form-control"
+                                   placeholder="Hodnota příhozu"
+                                   aria-label="Hodnota příhozu"
+                                   aria-describedby="bid-button"
+                                   [value]="getLowestPossibleBid()"
+                                   [min]="getLowestPossibleBid()">
+                            <span class="input-group-text">kč</span>
+                          </div>
                         </div>
                       </div>
 

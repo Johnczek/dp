@@ -3,13 +3,12 @@
     <h4 class="mb-3">Vytvoření nové aukce</h4>
   </div>
 
-
     <form [formGroup]="itemCreateForm" (ngSubmit)="onItemCreateFormSubmit()" class="mt-4">
 
       <div class="mb-2">
         <label for="new-item-picture" class="form-label">Obrázek aukce</label>
         <input type="file"
-               class="form-control"
+               class="form-control form-control-lg"
                id="new-item-picture"
                aria-describedby="item-change-picture-button"
                aria-label="Upload"
@@ -53,7 +52,7 @@
         </div>
 
         <div class="form-floating mb-2">
-          <input type="text"
+          <input type="number"
                  class="form-control"
                  id="new-item-starting-price"
                  placeholder="Vyvolávací cena"

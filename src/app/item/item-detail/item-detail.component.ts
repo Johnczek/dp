@@ -13,7 +13,7 @@ import {UserService} from '../../service/user.service';
 })
 export class ItemDetailComponent implements OnInit {
 
-  isUserLoggedIn = false;
+  loggedUser;
 
   itemId: number;
 
@@ -29,7 +29,7 @@ export class ItemDetailComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.isUserLoggedIn = this.userService.isUserLoggedIn();
+    this.loggedUser = this.userService.getLoggedUser();
 
     this.activatedRoute.paramMap.subscribe(() => {
       this.itemId = this.activatedRoute.snapshot.params.id;

@@ -21,7 +21,7 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
 
   userEditFormSubmitting = false;
 
-  pictureBase64: Blob;
+  pictureBlob: Blob;
 
   currentAvatarUrl: string;
 
@@ -147,7 +147,7 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
 
     this.avatarFormSubmitting = true;
 
-    this.userService.updateUserAvatar(this.pictureBase64)
+    this.userService.updateUserAvatar(this.pictureBlob)
       .pipe(finalize(() => {
           this.avatarFormSubmitting = false;
         }
@@ -179,7 +179,7 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
           if (ENABLED_IMAGE_FORMATS.indexOf(fileExt) === -1) {
             this.avatarChangeForm.get('avatar').setErrors({badExtension: true});
           }
-          this.pictureBase64 = this.fileService.convertBase64ToBlob(reader.result as string);
+          this.pictureBlob = this.fileService.convertBase64ToBlob(reader.result as string);
         }
       };
     }

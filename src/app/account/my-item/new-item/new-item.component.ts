@@ -8,6 +8,12 @@ import {ENABLED_IMAGE_FORMATS} from '../../../globals';
 import {FileService} from '../../../service/file.service';
 import {StrictHttpResponse} from '../../../api/strict-http-response';
 import {ItemCreationOptionsResponse} from '../../../api/models/item-creation-options-response';
+import {FileUploadResponse} from '../../../api/models/file-upload-response';
+import {ItemCreationRequest} from '../../../api/models/item-creation-request';
+import {ItemDto} from '../../../api/models/item-dto';
+import {AlertService} from '../../../service/alert.service';
+import {Router} from '@angular/router';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-new-item',
@@ -20,11 +26,11 @@ export class NewItemComponent implements OnInit, OnDestroy {
 
   itemCreateFormSubmitting = false;
 
+  itemImageUploadSubscription: Subscription;
+
   itemCreateFormSubscription: Subscription;
 
-  pictureBase64: Blob;
-
-  itemPictureUrl;
+  pictureBlob: Blob;
 
   deliveries: Array<DeliveryDto>;
 
@@ -33,6 +39,8 @@ export class NewItemComponent implements OnInit, OnDestroy {
   allowedExtensions = ENABLED_IMAGE_FORMATS;
 
   constructor(
+    public router: Router,
+    public alertService: AlertService,
     public fileService: FileService,
     public itemService: ItemService) {
   }
@@ -49,21 +57,51 @@ export class NewItemComponent implements OnInit, OnDestroy {
           startingPrice: new FormControl('', [Validators.required, Validators.min(1)]),
           name: new FormControl('', [Validators.required]),
           description: new FormControl(''),
-          validFrom: new FormControl([Validators.required]),
-          validTo: new FormControl('', [Validators.required]),
+          validFrom: new FormControl(this.getCurrentDateInISOFormat(), [Validators.required]),
+          validTo: new FormControl([Validators.required]),
           deliveryId: new FormControl('', [Validators.required]),
           paymentId: new FormControl('', [Validators.required]),
-          picture: new FormControl('', [Validators.required]),
+          picture: new FormControl(null, [Validators.required]),
         });
       });
   }
 
   ngOnDestroy(): void {
     this.itemCreateFormSubscription?.unsubscribe();
+
+    this.itemImageUploadSubscription?.unsubscribe();
   }
 
   onItemCreateFormSubmit(): void {
 
+    this.itemCreateFormSubmitting = true;
+
+    this.itemImageUploadSubscription = this.fileService.uploadFile('ITEM_PICTURE', this.pictureBlob)
+      .pipe(
+        finalize(() => this.itemCreateFormSubmitting = false)
+      )
+      .subscribe((response: StrictHttpResponse<FileUploadResponse>) => {
+
+        console.log('response:');
+        console.log(response);
+
+        const data: ItemCreationRequest = {
+          deliveryId: this.itemCreateForm.get('deliveryId').value,
+          paymentId: this.itemCreateForm.get('paymentId').value,
+          name: this.itemCreateForm.get('name').value,
+          description: this.itemCreateForm.get('description').value,
+          startingPrice: this.itemCreateForm.get('startingPrice').value,
+          validFrom: this.itemCreateForm.get('validFrom').value,
+          validTo: this.itemCreateForm.get('validTo').value,
+          pictureUUID: response.body.fileUUID
+        };
+
+        this.itemCreateFormSubscription = this.itemService.createItem(data)
+          .subscribe((itemResponse: StrictHttpResponse<ItemDto>) => {
+            this.alertService.success('Aukce byla úspěšně založena');
+            this.router.navigate(['item', itemResponse.body.id]);
+          });
+      });
   }
 
 
@@ -82,7 +120,7 @@ export class NewItemComponent implements OnInit, OnDestroy {
           if (ENABLED_IMAGE_FORMATS.indexOf(fileExt) === -1) {
             this.itemCreateForm.get('picture').setErrors({badExtension: true});
           }
-          this.pictureBase64 = this.fileService.convertBase64ToBlob(reader.result as string);
+          this.pictureBlob = this.fileService.convertBase64ToBlob(reader.result as string);
         }
       };
     }

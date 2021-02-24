@@ -9,6 +9,7 @@ import {ItemChangeRequest} from '../api/models/item-change-request';
 import {catchError, mergeMap, tap} from 'rxjs/operators';
 import {FileUploadResponse} from '../api/models/file-upload-response';
 import {ItemCreationOptionsResponse} from '../api/models/item-creation-options-response';
+import {ItemCreationRequest} from '../api/models/item-creation-request';
 
 @Injectable({
   providedIn: 'root'
@@ -100,6 +101,10 @@ export class ItemService {
         )
         .subscribe();
     });
+  }
+
+  createItem(data: ItemCreationRequest): Observable<StrictHttpResponse<ItemDto>> {
+    return this.itemControllerService.createItem$Response({body: data});
   }
 
   getItemCreationOptions(): Observable<StrictHttpResponse<ItemCreationOptionsResponse>> {

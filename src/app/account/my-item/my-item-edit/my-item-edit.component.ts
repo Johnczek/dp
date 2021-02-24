@@ -49,7 +49,7 @@ export class MyItemEditComponent implements OnInit, OnDestroy {
 
   itemId: number;
 
-  pictureBase64: Blob;
+  pictureBlob: Blob;
 
   itemPictureUrl;
 
@@ -143,7 +143,7 @@ export class MyItemEditComponent implements OnInit, OnDestroy {
 
     this.itemPictureFormSubmitting = true;
 
-    this.itemPictureUpdateSubscription = this.itemService.updateItemPicture(this.itemId, this.pictureBase64)
+    this.itemPictureUpdateSubscription = this.itemService.updateItemPicture(this.itemId, this.pictureBlob)
       .pipe(
         finalize(() => {
           this.itemPictureEditForm.reset();
@@ -171,7 +171,7 @@ export class MyItemEditComponent implements OnInit, OnDestroy {
           if (ENABLED_IMAGE_FORMATS.indexOf(fileExt) === -1) {
             this.itemPictureEditForm.get('picture').setErrors({badExtension: true});
           }
-          this.pictureBase64 = this.fileService.convertBase64ToBlob(reader.result as string);
+          this.pictureBlob = this.fileService.convertBase64ToBlob(reader.result as string);
         }
       };
     }

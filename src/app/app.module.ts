@@ -25,6 +25,10 @@ import { MyItemComponent } from './account/my-item/my-item.component';
 import { MyAllItemsComponent } from './account/my-item/my-all-items/my-all-items.component';
 import { MyItemEditComponent } from './account/my-item/my-item-edit/my-item-edit.component';
 import { NewItemComponent } from './account/my-item/new-item/new-item.component';
+import { CartComponent } from './account/cart/cart.component';
+import { OrdersComponent } from './account/orders/orders.component';
+import { OrderCreateComponent } from './account/order-create/order-create.component';
+import { OrderDetailComponent } from './account/order-detail/order-detail.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +52,10 @@ import { NewItemComponent } from './account/my-item/new-item/new-item.component'
     MyAllItemsComponent,
     MyItemEditComponent,
     NewItemComponent,
+    CartComponent,
+    OrdersComponent,
+    OrderCreateComponent,
+    OrderDetailComponent,
   ],
   imports: [
     BrowserModule,

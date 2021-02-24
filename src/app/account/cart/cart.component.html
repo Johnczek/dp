@@ -1,0 +1,24 @@
+<div class="row">
+  <div class="col-12">
+    <h2>Košík</h2>
+  </div>
+
+  <div class="col-12" *ngIf="cartItems && cartItems.length > 0; else noItems">
+
+  </div>
+
+  <ng-template #noItems>
+    <div class="row mt-4">
+      <div class="col-12 mb-4">
+        <div class="d-flex justify-content-center">
+          <h2><i class="bi bi-emoji-frown"></i></h2>
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="d-flex justify-content-center">
+          <h5>Ve vašem košíku není žádná vyhraná aukce k zaplacení. Zkuste na nějakou <a routerLink="/item">přihodit</a>.</h5>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>
