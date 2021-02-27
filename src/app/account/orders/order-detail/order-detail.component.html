@@ -1,0 +1,125 @@
+<div class="row" *ngIf="order">
+  <div class="col-12 mb-3">
+    <h2>Objednávka {{order.orderId}}</h2>
+  </div>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="card mb-2">
+        <div class="card-body">
+          <div class="row">
+            <div class="col-4 d-flex align-items-center">
+              <img [src]="fileService.getFileUrlByUUID(order.item.pictureUUID)" alt="{{order.item.name}} picture"
+                   class="img-fluid img-md">
+            </div>
+            <div class="col-3 d-flex align-items-center">
+              <h1 class="m-0">{{order.item.name}}</h1>
+            </div>
+
+            <div class="col-5 d-flex align-items-center">
+              <ul>
+                <li><strong>Vytvořeno:</strong> {{order.created|date:'dd. MM. YYYY v hh:mm'}}</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6">
+      <div class="card mb-2">
+        <div class="card-body">
+          <h4><strong>Prodejce:</strong></h4>
+
+          <div class="px-0 mt-3 d-flex align-items-center border-0">
+            <img [src]="this.fileService.getAvatarByUUIDOrDefault(order.seller.avatarUUID)"
+                 class="img-fluid rounded-circle me-3 img-xs"
+                 alt="Prodejce">
+            <div>
+              <h4 class="m-0"><a [routerLink]="['/', 'user-profile', order.seller.avatarUUID]"
+                                 class="text-decoration-none">{{order.seller.firstName}} {{order.seller.lastName|slice:0:1}}</a>
+              </h4>
+              <small class="text-muted">{{order.seller.email}}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6">
+      <div class="card mb-2">
+        <div class="card-body">
+          <h4><strong>Kupující:</strong></h4>
+
+          <div class="px-0 mt-3 d-flex align-items-center border-0">
+            <img [src]="this.fileService.getAvatarByUUIDOrDefault(order.buyer.avatarUUID)"
+                 class="img-fluid rounded-circle me-3 img-xs"
+                 alt="Prodejce">
+            <div>
+              <h4 class="m-0"><a [routerLink]="['/', 'user-profile', order.buyer.avatarUUID]"
+                                 class="text-decoration-none">{{order.buyer.firstName}} {{order.buyer.lastName|slice:0:1}}</a>
+              </h4>
+              <small class="text-muted">{{order.buyer.email}}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12">
+      <div class="card mb-2">
+        <div class="card-body">
+          <h4 class="d-flex justify-content-between align-items-center">
+            <strong>Cena produktu:</strong>
+            <span>{{order.item.itemHighestBid?.amount|currency:'CZK'}} kč</span>
+          </h4>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6">
+      <div class="card">
+        <div class="card-body">
+          <h4><strong>Doprava:</strong></h4>
+
+          <div class="detail-box px-0 mt-3 d-flex justify-content-between border-0">
+          <span>
+          <img [src]="this.fileService.getFileUrlByUUID(order.item.delivery.logoUUID)" class="img-fluid me-2"
+               alt="Doprava">
+            {{order.item.delivery?.name}}
+          </span>
+            <span class=" ms-1 text-muted">
+              {{order.item.delivery?.price}} kč
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6">
+      <div class="card">
+        <div class="card-body">
+          <h4><strong>Platba:</strong></h4>
+
+          <div class="detail-box px-0 mt-3 d-flex justify-content-between border-0">
+          <span>
+          <img [src]="this.fileService.getFileUrlByUUID(order.item.payment.logoUUID)" class="img-fluid me-2"
+               alt="Platba">
+            {{order.item.payment?.name}}
+          </span>
+            <span class=" ms-1 text-muted">
+              {{order.item.payment?.price}} kč
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 mt-4">
+      <h2 class="d-flex justify-content-end"><strong class="me-2">Celkem: </strong> <span>{{getTotalPrice()}} kč</span>
+      </h2>
+    </div>
+  </div>
+
+
+</div>

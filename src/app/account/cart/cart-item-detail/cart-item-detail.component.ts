@@ -6,6 +6,8 @@ import {StrictHttpResponse} from '../../../api/strict-http-response';
 import {CartItemResponse} from '../../../api/models/cart-item-response';
 import {FileService} from '../../../service/file.service';
 import {OrderService} from '../../../service/order.service';
+import {AlertService} from '../../../service/alert.service';
+import {OrderCreationResponse} from '../../../api/models/order-creation-response';
 
 @Component({
   selector: 'app-cart-item-detail',
@@ -19,6 +21,7 @@ export class CartItemDetailComponent implements OnInit {
   cartItem: ItemDto;
 
   constructor(
+    public alertService: AlertService,
     public orderService: OrderService,
     public router: Router,
     public fileService: FileService,
@@ -44,6 +47,10 @@ export class CartItemDetailComponent implements OnInit {
   }
 
   createOrder(): void {
-
+    this.orderService.createOrder(this.cartItemId)
+      .subscribe((response: StrictHttpResponse<OrderCreationResponse>) => {
+          this.alertService.success('Objednávka byla úspěšně vytvořena');
+          this.router.navigate(['/account', 'order', this.cartItemId]);
+      });
   }
 }

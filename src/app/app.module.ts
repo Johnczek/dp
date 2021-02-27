@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {LOCALE_ID, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
 import {AppComponent} from './app.component';
@@ -27,10 +27,10 @@ import { MyItemEditComponent } from './account/my-item/my-item-edit/my-item-edit
 import { NewItemComponent } from './account/my-item/new-item/new-item.component';
 import { CartComponent } from './account/cart/cart.component';
 import { OrdersComponent } from './account/orders/orders.component';
-import { OrderCreateComponent } from './account/order-create/order-create.component';
-import { OrderDetailComponent } from './account/order-detail/order-detail.component';
+import { OrderDetailComponent } from './account/orders/order-detail/order-detail.component';
 import { CartItemPreviewComponent } from './account/cart/cart-item-preview/cart-item-preview.component';
 import { CartItemDetailComponent } from './account/cart/cart-item-detail/cart-item-detail.component';
+import { OrderPreviewComponent } from './account/order/order-preview/order-preview.component';
 
 @NgModule({
   declarations: [
@@ -56,10 +56,10 @@ import { CartItemDetailComponent } from './account/cart/cart-item-detail/cart-it
     NewItemComponent,
     CartComponent,
     OrdersComponent,
-    OrderCreateComponent,
     OrderDetailComponent,
     CartItemPreviewComponent,
     CartItemDetailComponent,
+    OrderPreviewComponent,
   ],
   imports: [
     BrowserModule,
@@ -67,7 +67,12 @@ import { CartItemDetailComponent } from './account/cart/cart-item-detail/cart-it
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [authInterceptorProviders],
+  providers: [
+    authInterceptorProviders,
+    {
+      provide: LOCALE_ID,
+      useValue: 'cs_CZ'
+    }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
