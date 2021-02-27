@@ -3,8 +3,10 @@
     <h2>Košík</h2>
   </div>
 
-  <div class="col-12" *ngIf="cartItems && cartItems.length > 0; else noItems">
-
+  <div *ngIf="cartItems && cartItems.length > 0; else noItems">
+    <div class="col-12" *ngFor="let cartItem of cartItems">
+      <app-cart-item-preview [cartItem]="cartItem"></app-cart-item-preview>
+    </div>
   </div>
 
   <ng-template #noItems>
@@ -16,7 +18,8 @@
       </div>
       <div class="col-12">
         <div class="d-flex justify-content-center">
-          <h5>Ve vašem košíku není žádná vyhraná aukce k zaplacení. Zkuste na nějakou <a routerLink="/item">přihodit</a>.</h5>
+          <h5>Ve vašem košíku není žádná vyhraná aukce k zaplacení. Zkuste na nějakou <a routerLink="/item">přihodit</a>.
+          </h5>
         </div>
       </div>
     </div>

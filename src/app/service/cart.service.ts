@@ -1,8 +1,9 @@
-import { Injectable } from '@angular/core';
-import {CartControllerService} from '../api/services/cart-controller.service';
+import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 import {StrictHttpResponse} from '../api/strict-http-response';
 import {CartResponse} from '../api/models/cart-response';
+import {CartItemResponse} from '../api/models/cart-item-response';
+import {CartControllerService} from '../api/services/cart-controller.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,11 @@ export class CartService {
   ) { }
 
 
-  getCartItemsForUser(userId: number): Observable<StrictHttpResponse<CartResponse>> {
-    return this.cartControllerService.getCartForUser$Response({userId});
+  getCartItemsForUser(): Observable<StrictHttpResponse<CartResponse>> {
+    return this.cartControllerService.getCartForLoggedUser$Response();
+  }
+
+  getCartItem(itemId: number): Observable<StrictHttpResponse<CartItemResponse>> {
+    return this.cartControllerService.getCartItem$Response({itemId});
   }
 }

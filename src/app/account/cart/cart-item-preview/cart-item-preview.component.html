@@ -1,0 +1,25 @@
+<div class="card my-2">
+  <div class="card-body">
+    <div class="row">
+      <div class="col-2 d-flex align-items-center">
+        <img [src]="fileService.getFileUrlByUUID(cartItem.pictureUUID)" alt="{{cartItem.name}} picture" class="img-fluid img-sm">
+      </div>
+      <div class="col-4">
+        <h4 class="m-0">{{cartItem.name}}</h4>
+        <small class="text-muted">Od prodejce <a [routerLink]="['/', 'user-profile', cartItem.seller.id]"
+                                                 class="text-decoration-none">{{cartItem.seller.firstName}} {{cartItem.seller.lastName|slice:0:1}}</a>
+        </small>
+      </div>
+      <div class="col-4 d-flex align-items-center flex-wrap">
+        <h5 class="m-0 w-100">{{cartItem.itemHighestBid.amount}} kč</h5>
+        <small class="text-muted" *ngIf="(cartItem.delivery?.price + cartItem.payment?.price) > 0">
+          (+ {{cartItem.delivery?.price + cartItem.payment?.price}} kč)</small>
+      </div>
+      <div class="col-2 d-flex align-items-center justify-content-end">
+        <div class="btn btn-outline-primary" [routerLink]="['/', 'account', 'cart', cartItem.id]">
+          Zakoupit
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

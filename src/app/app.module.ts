@@ -29,6 +29,8 @@ import { CartComponent } from './account/cart/cart.component';
 import { OrdersComponent } from './account/orders/orders.component';
 import { OrderCreateComponent } from './account/order-create/order-create.component';
 import { OrderDetailComponent } from './account/order-detail/order-detail.component';
+import { CartItemPreviewComponent } from './account/cart/cart-item-preview/cart-item-preview.component';
+import { CartItemDetailComponent } from './account/cart/cart-item-detail/cart-item-detail.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +58,8 @@ import { OrderDetailComponent } from './account/order-detail/order-detail.compon
     OrdersComponent,
     OrderCreateComponent,
     OrderDetailComponent,
+    CartItemPreviewComponent,
+    CartItemDetailComponent,
   ],
   imports: [
     BrowserModule,

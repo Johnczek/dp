@@ -16,6 +16,7 @@ import {MyAllItemsComponent} from './account/my-item/my-all-items/my-all-items.c
 import {NewItemComponent} from './account/my-item/new-item/new-item.component';
 import {MyItemEditComponent} from './account/my-item/my-item-edit/my-item-edit.component';
 import {CartComponent} from './account/cart/cart.component';
+import {CartItemDetailComponent} from './account/cart/cart-item-detail/cart-item-detail.component';
 
 // const appRoutes: Routes = [
 //   { path: '', redirectTo: '/map', pathMatch: 'full'},
@@ -55,6 +56,7 @@ const appRoutes: Routes = [
       { path: 'password', component: ChangePasswordComponent },
       { path: 'bank-account', component: BankAccountComponent },
       { path: 'address', component: AddressComponent },
+      { path: 'cart/:id', component: CartItemDetailComponent },
       { path: 'cart', component: CartComponent },
       { path: 'auction', component: MyItemComponent, children: [
           {path: '', component: MyAllItemsComponent},
