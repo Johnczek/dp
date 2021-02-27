@@ -1,4 +1,4 @@
-import {LOCALE_ID, NgModule} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
 import {AppComponent} from './app.component';
@@ -67,12 +67,7 @@ import { OrderPreviewComponent } from './account/order/order-preview/order-previ
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [
-    authInterceptorProviders,
-    {
-      provide: LOCALE_ID,
-      useValue: 'cs_CZ'
-    }],
+  providers: [authInterceptorProviders],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
