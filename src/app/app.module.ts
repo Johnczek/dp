@@ -31,6 +31,9 @@ import { OrderDetailComponent } from './account/orders/order-detail/order-detail
 import { CartItemPreviewComponent } from './account/cart/cart-item-preview/cart-item-preview.component';
 import { CartItemDetailComponent } from './account/cart/cart-item-detail/cart-item-detail.component';
 import { OrderPreviewComponent } from './account/order/order-preview/order-preview.component';
+import { GdprComponent } from './gdpr/gdpr.component';
+import { CookiesComponent } from './cookies/cookies.component';
+import { CookieService } from 'ngx-cookie-service';
 
 @NgModule({
   declarations: [
@@ -60,6 +63,8 @@ import { OrderPreviewComponent } from './account/order/order-preview/order-previ
     CartItemPreviewComponent,
     CartItemDetailComponent,
     OrderPreviewComponent,
+    GdprComponent,
+    CookiesComponent,
   ],
   imports: [
     BrowserModule,
@@ -67,7 +72,7 @@ import { OrderPreviewComponent } from './account/order/order-preview/order-previ
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [authInterceptorProviders],
+  providers: [authInterceptorProviders, CookieService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

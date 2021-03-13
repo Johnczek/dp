@@ -76,10 +76,6 @@ export class AddressComponent implements OnInit, OnDestroy {
       streetNumber: new FormControl(''),
       zipcode: new FormControl('', [Validators.required]),
     });
-
-    this.addressAddForm.valueChanges.subscribe(() => {
-      console.log(this.addressAddForm);
-    });
   }
 
   deleteAddress(addressId: number): void {

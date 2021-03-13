@@ -8,7 +8,7 @@
         </div>
       </div>
       <div class="col-12 text-center mt-2">
-        <h2>{{user.firstName}} {{user.lastName}}</h2>
+        <h2>{{user.firstName}} {{user.lastName|slice:0:1}}.</h2>
         <h5 class="text-muted">{{user.email}}</h5>
       </div>
 
@@ -20,7 +20,7 @@
       <hr class="my-4">
 
       <div class="col-12">
-        <h3 class="mb-4">Co aktuálně prodávám:</h3>
+        <h3 class="mb-4">Mé prodeje:</h3>
         <div class="row">
 
           <div *ngFor="let item of userItems" class="col-12 col-md-6 mb-4">

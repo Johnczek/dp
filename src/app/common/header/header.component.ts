@@ -41,7 +41,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   detectChanges(): void {
     this.userChangeSubscription = this.userService.userChangeSubject
       .subscribe((data: JwtResponse) => {
-        console.log('header dostal data');
         this.setUpData(data);
       });
   }

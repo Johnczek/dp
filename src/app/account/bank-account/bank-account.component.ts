@@ -75,10 +75,6 @@ export class BankAccountComponent implements OnInit, OnDestroy {
       number: new FormControl('', [Validators.required]),
       bankCode: new FormControl('', [Validators.required]),
     });
-
-    this.bankAccountAddForm.valueChanges.subscribe(() => {
-      console.log(this.bankAccountAddForm);
-    });
   }
 
   deleteBankAccount(bankAccountId: number): void {

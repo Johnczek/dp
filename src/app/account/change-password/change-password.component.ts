@@ -53,10 +53,6 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
       password: new FormControl('', [Validators.required, Validators.minLength(this.passwordMinLength)]),
       passwordRepeat: new FormControl('', [Validators.required]),
     }, {validators: [this.passwordsMatching]});
-
-    this.changePasswordForm.valueChanges.subscribe(() => {
-      console.log(this.changePasswordForm);
-    });
   }
 
   // TODO complete password change

@@ -19,6 +19,7 @@ import {OrdersComponent} from './account/orders/orders.component';
 import {OrderDetailComponent} from './account/orders/order-detail/order-detail.component';
 import {LoginComponent} from './user/login/login.component';
 import {HomepageComponent} from './homepage/homepage.component';
+import {GdprComponent} from './gdpr/gdpr.component';
 
 const appRoutes: Routes = [
   {path: '', component: HomepageComponent},
@@ -46,6 +47,8 @@ const appRoutes: Routes = [
   },
   {path: 'item/:id', component: ItemDetailComponent},
   {path: 'item', component: ItemListComponent},
+  {path: 'gdpr', component: GdprComponent},
+  {path: '**', component: HomepageComponent}
 ];
 
 @NgModule({

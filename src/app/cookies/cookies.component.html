@@ -1,0 +1,13 @@
+<div class="cookies-box alert fade show" [class.d-block] = showBox [class.d-none] = !showBox>
+  <p class="mb-1">Tento web používá k poskytování služeb, personalizaci reklam a analýze návštěvnosti soubory cookie.
+    Používáním tohoto webu s tímto souhlasíte.
+  </p>
+  <div class="d-flex justify-content-between align-items-baseline">
+    <a class="alert-link" routerLink="/gdpr" title="Informace o cookies" target="_blank" rel="noopener">
+      Více informací
+    </a>
+    <button aria-label="Close" class="btn btn-sm btn-primary" data-dismiss="alert" type="button" (click)="acceptCookie()">
+      Rozumím
+    </button>
+  </div>
+</div>

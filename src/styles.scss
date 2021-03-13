@@ -54,3 +54,33 @@ input:required, textarea:required, select:required {
   max-width: 10rem;
 }
 
+.cookies-box {
+  position: fixed;
+  bottom: .9375rem;
+  left: .9375rem;
+  z-index: 2048;
+  max-width: 21.25rem;
+  margin: 0 !important;
+  padding: 1rem;
+  color: #fff;
+  font-weight: 400;
+  font-size: .7rem;
+  text-align: center;
+  background: gray;
+  border: 0;
+
+  .alert-link {
+    color: #fff;
+    font-weight: 400;
+    white-space: nowrap;
+    text-decoration: underline;
+  }
+
+  @include media-breakpoint-down(sm) {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-width: 100%;
+    padding: .7rem;
+  }
+}

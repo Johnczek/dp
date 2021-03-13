@@ -5,14 +5,22 @@
                                                class="text-decoration-none">{{item.seller.firstName}} {{item.seller.lastName|slice:0:1}}
         </a>.
       </h2>
-      <small class="text-muted">ID: {{item.id}} | Vystaveno {{item.validFrom|date:'dd. MM. YYYY v hh:mm'}}</small>
+      <small class="text-muted">
+        ID: {{item.id}}
+        | Vystaveno {{item.validFrom|date:'dd. MM. YYYY v hh:mm'}}
+        | <span *ngIf="ws" class="text-success">Automatická obnova aktivní</span>
+        <span *ngIf="!ws" class="text-warning">Automatická obnova není aktivní. <a class="text-dark" (click)="connectToWsBroadcast()">Obnovit</a></span>
+      </small>
     </div>
   </div>
 
   <div class="row">
     <div class="col-12">
       <div class="card">
-        <div class="card-body">
+        <div
+          [class.border]="item?.itemHighestBid?.userId == this.loggedUser?.id"
+          [class.border-success]="item?.itemHighestBid?.userId == this.loggedUser?.id"
+          class="card-body">
           <div class="row">
             <div class="col-lg-4 col-12 d-flex justify-content-center mb-lg-0 mb-4">
               <img [src]="this.fileService.getFileUrlByUUID(item.pictureUUID)"
@@ -27,7 +35,7 @@
                       <div class="col-12 mb-2">
                         <strong class="me-2" *ngIf="item.state === 'ACTIVE'">Aktuální cena</strong>
                         <strong class="me-2" *ngIf="item.state !== 'ACTIVE'">Cena</strong>
-                        <h2 class="text-warning mb-1">{{getActualPrice()}} kč</h2>
+                        <h2 class="text-warning mb-1">{{this.currentPrice}} kč</h2>
                         <div class="text-muted mb-1"><strong class="me-2">Vyvolávací
                           cena:</strong> {{item.startingPrice}} kč
                         </div>
@@ -46,16 +54,27 @@
                         </div>
                         <div class="col-12"
                              *ngIf="item.state === 'ACTIVE' && this.loggedUser != null; else notLoggedUserOrInactiveItem">
-                          <div class="input-group mb-3">
-                            <button class="btn btn-outline-primary" type="button" id="bid-button">Přihodit</button>
-                            <input type="number"
-                                   class="form-control"
-                                   placeholder="Hodnota příhozu"
-                                   aria-label="Hodnota příhozu"
-                                   aria-describedby="bid-button"
-                                   [value]="getLowestPossibleBid()"
-                                   [min]="getLowestPossibleBid()">
-                            <span class="input-group-text">kč</span>
+                          <div class="mb-1">
+                            <form [formGroup]="bidForm" (ngSubmit)="makeBid()" class="input-group">
+                              <button
+                                [attr.disabled]="item?.itemHighestBid?.userId == this.loggedUser?.id ? '' : null"
+                                [class.btn-secondary]="item?.itemHighestBid?.userId == this.loggedUser?.id"
+                                class="btn btn-outline-primary"
+                                type="submit"
+                                id="bid-button">Přihodit</button>
+                              <input type="number"
+                                     class="form-control"
+                                     placeholder="Hodnota příhozu"
+                                     aria-label="Hodnota příhozu"
+                                     aria-describedby="bid-button"
+                                     formControlName="amount"
+                                     [attr.disabled]="item?.itemHighestBid?.userId == this.loggedUser?.id ? '' : null"
+                                     [min]="getLowestPossibleBid()">
+                              <span class="input-group-text">kč</span>
+                            </form>
+                          </div>
+                          <div class="div mb-3" *ngIf="item?.itemHighestBid?.userId == this.loggedUser?.id">
+                            <strong class="text-success d-block text-center">Vyhráváte!</strong>
                           </div>
                         </div>
                       </div>

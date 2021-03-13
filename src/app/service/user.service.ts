@@ -15,6 +15,7 @@ import {BankAccountDto} from '../api/models/bank-account-dto';
 import {AddressCreationRequest} from '../api/models/address-creation-request';
 import {AddressDto} from '../api/models/address-dto';
 import {RegisterRequest} from '../api/models/register-request';
+import {Router} from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,7 @@ export class UserService implements OnDestroy {
   public userChangeSubject: Subject<JwtResponse> = new Subject<JwtResponse>();
 
   constructor(
+    public router: Router,
     public tokenStorageService: TokenStorageService,
     public fileControllerService: FileControllerService,
     public userControllerService: UserControllerService) { }
@@ -66,6 +68,7 @@ export class UserService implements OnDestroy {
   logOut(): void {
     this.tokenStorageService.logOut();
     this.userChangeSubject.next(null);
+    this.router.navigate(['/']);
   }
 
   refreshLoggedUserData(): void {

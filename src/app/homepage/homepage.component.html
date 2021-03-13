@@ -2,19 +2,76 @@
 
 <div class="row mt-4">
   <div class="col-12">
-    <div class="alert alert-danger">
+    <div class="alert alert-warning">
       <strong>Důležité upozornění:</strong> Nejedná se o reálnou webovou službu! Tato webová aplikace byla navržena a implementována v rámci realizace diplomové práce na Mendelově univerzitě v Brně.
     </div>
   </div>
 </div>
 
 <div class="row mt-4">
-  <div class="col-12">
+  <div class="col-md-6 col-12 mb-4">
     <h3>Základní informace</h3>
     <ul>
-      <li>TODO</li>
-      <li>TODO</li>
-      <li>TODO</li>
+      <li>Jedná se o aplikaci aukčního portálu s možností přihazování v reálném čase</li>
+      <li>Systém dovoluje jednoduchou správu uživatelských účtů, stejně tak jako podporuje celý nákupní proces</li>
+      <li>Ohledně GDPR pojednává stránka <a routerLink="/gdpr" target="_blank">Ochrana osobních údajů</a></li>
     </ul>
+  </div>
+
+  <div class="col-md-6 col-12 mb-4">
+    <h3>Technické informace</h3>
+    <ul>
+      <li>Jedná se o moderní single page webovou službu skládající se z back-endové a front-endové části</li>
+      <li>Front-endová část je realizována za pomocí framerowku <a href="https://angular.io/" target="_blank">Angular</a>, vzhledově se opírá o framework
+        <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a></li>
+      <li>Bank-endovou část věci poté zajišťuje <a href="https://spring.io/projects/spring-boot">Spring Bootová</a> aplikace komunikující s angularem povětšinou skrze REST rozhraní.
+        Určitým specifikem je přihazování v reálném čase, které se děje skrze websockety.</li>
+      <li>Uložení dat se děje skrze relační databázi <a href="https://www.postgresql.org/">PostgreSQL</a></li>
+    </ul>
+  </div>
+
+  <div class="col-md-6 col-12 mb-4">
+    <h3>Testovací účty</h3>
+    <ul>
+      <li>V aplikaci je pro zjednodušení testování založeno několik testovacích účtů s následujícími přihlašovacími údaji</li>
+    </ul>
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+        <tr>
+          <th scope="col">Email</th>
+          <th scope="col">Heslo</th>
+          <th scope="col">Poznámka</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>user@user.com</td>
+          <td>user</td>
+          <td>Nejvíce založených nabídek</td>
+        </tr>
+        <tr>
+          <td>admin@admin.com</td>
+          <td>admin</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>user2@user.com</td>
+          <td>user</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>user3@user.com</td>
+          <td>user</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>user4@user.com</td>
+          <td>user</td>
+          <td>Nejvíce příhozů</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

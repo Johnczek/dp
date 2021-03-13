@@ -3,7 +3,6 @@ import {UserControllerService} from '../../api/services/user-controller.service'
 import {AbstractControl, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs';
 import {finalize} from 'rxjs/operators';
-import {StrictHttpResponse} from '../../api/strict-http-response';
 import {RegisterRequest} from '../../api/models/register-request';
 import {UserService} from '../../service/user.service';
 import {AlertService} from '../../service/alert.service';

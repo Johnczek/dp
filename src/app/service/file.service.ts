@@ -59,8 +59,6 @@ export class FileService {
       uInt8Array[i] = decodedData.charCodeAt(i);
     }
 
-    console.log(imageType);
-
     // Return BLOB image after conversion
     return new Blob([uInt8Array], {type: imageType});
   }

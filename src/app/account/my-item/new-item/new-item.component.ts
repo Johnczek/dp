@@ -82,9 +82,6 @@ export class NewItemComponent implements OnInit, OnDestroy {
       )
       .subscribe((response: StrictHttpResponse<FileUploadResponse>) => {
 
-        console.log('response:');
-        console.log(response);
-
         const data: ItemCreationRequest = {
           deliveryId: this.itemCreateForm.get('deliveryId').value,
           paymentId: this.itemCreateForm.get('paymentId').value,
