@@ -55,7 +55,6 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
     }, {validators: [this.passwordsMatching]});
   }
 
-  // TODO complete password change
   onchangePasswordFormSubmit(): void {
     this.changePasswordFormSubmitting = true;
 

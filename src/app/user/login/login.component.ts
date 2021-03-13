@@ -42,8 +42,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       email: new FormControl('admin@admin.com', [Validators.required, Validators.email]),
       password: new FormControl('admin', Validators.required)
     });
-
-    // TODO remember me handling
   }
 
   onLoginFormSubmit(): void {
