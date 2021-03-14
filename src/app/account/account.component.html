@@ -1,5 +1,16 @@
+<div class="row d-md-none d-block">
+  <div class="col-12 p-0">
+    <div class="fs-4 mb-2 border-bottom border-top p-2" (click)="hideMobileMenu = !hideMobileMenu">
+      <i class="bi bi-list" *ngIf="hideMobileMenu"></i>
+      <i class="bi bi-x" *ngIf="!hideMobileMenu"></i>
+      Menu
+    </div>
+  </div>
+</div>
 <div class="row">
-  <div class="col-4 pe-4" id="account-menu">
+  <div class="col-12 col-md-4 pe-4 d-md-block"
+       id="account-menu"
+      [class.d-none]="hideMobileMenu">
     <div class="account-menu-box mb-4">
       <h4 class="mb-3">Nastavení účtu</h4>
       <ul class="list-group">
@@ -32,7 +43,7 @@
     </div>
   </div>
 
-  <div class="col-8 ps-4" id="account-content">
+  <div class="col-12 col-md-8 ps-4" id="account-content">
     <router-outlet></router-outlet>
   </div>
 </div>

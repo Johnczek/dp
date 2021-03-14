@@ -1,8 +1,14 @@
+@import "node_modules/bootstrap/scss/bootstrap";
+
 #alerts-wrapper {
   z-index: 10000000;
   position: fixed;
   left: 50%;
   min-width: 550px;
+
+  @include media-breakpoint-down(sm) {
+    min-width: 95%;
+  }
 
   .inner-alert {
     position: relative;

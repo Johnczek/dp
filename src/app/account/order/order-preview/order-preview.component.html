@@ -1,13 +1,13 @@
 <div class="card my-2">
   <div class="card-body">
     <div class="row">
-      <div class="col-2 d-flex align-items-center">
+      <div class="d-flex align-items-center justify-content-center col-12 col-sm-3 col-md-2 mb-md-0 mb-3">
         <img [src]="fileService.getFileUrlByUUID(order.item.pictureUUID)" alt="{{order.item.name}} picture" class="img-fluid img-sm">
       </div>
-      <div class="col-2 d-flex align-items-center">
+      <div class="col-12 col-sm-8 col-md-2  mb-md-0 mb-3 d-flex align-items-center">
         <h4 class="mb-1">{{order.item.name}}</h4>
       </div>
-      <div class="col-4">
+      <div class="col-12 col-sm-6 col-md-4 mb-sm-0 mb-3">
         <small class="text-muted d-block">Prodávající: <a [routerLink]="['/', 'user-profile', order.seller.id]"
                                                           class="text-decoration-none">{{order.seller.firstName}} {{order.seller.lastName|slice:0:1}}</a>
         </small>
@@ -18,10 +18,10 @@
           Vytvořeno: {{order.created|date:'dd. MM. YYYY v hh:mm'}}
         </small>
       </div>
-      <div class="col-2 d-flex align-items-center flex-wrap">
+      <div class="col-6 col-sm-3 col-md-2 d-flex align-items-center flex-wrap mb-md-0 mb-sm-3 mb-0">
         <h5 class="m-0 w-100">{{getTotalPrice()}} kč</h5>
       </div>
-      <div class="col-2 d-flex align-items-center justify-content-end">
+      <div class="col-6 col-sm-12 col-md-2 d-flex align-items-center justify-content-end">
         <div class="btn btn-outline-primary" [routerLink]="['/', 'account', 'order', order.orderId]">
           Detail
         </div>
