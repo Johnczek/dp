@@ -105,7 +105,6 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
         });
       },
       () => {
-        this.alertService.error('Uživatel nenalezen');
         this.router.navigate(['/login']);
       }
     );
@@ -136,10 +135,6 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
       .subscribe(() => {
           this.userService.refreshLoggedUserData();
           this.alertService.success('Úprava uživatelských dat proběhla úspěšně');
-      }, (error) => {
-        // TODO handle error
-        this.alertService.error('Nebylo možné upravit uživatelský účet');
-        console.log(error);
       });
   }
 
@@ -156,11 +151,6 @@ export class AccountGeneralComponent implements OnInit, OnDestroy {
 
 
           this.currentAvatarUrl = this.fileService.getFileUrlByUUID(response);
-        },
-        (error) => {
-          // TODO handle error
-          this.alertService.error('Nebylo možné měnit avatar');
-          console.error(error);
         });
   }
 

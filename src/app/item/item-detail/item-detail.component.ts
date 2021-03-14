@@ -5,9 +5,9 @@ import {FileService} from '../../service/file.service';
 import {ItemDto} from '../../api/models/item-dto';
 import {StrictHttpResponse} from '../../api/strict-http-response';
 import {UserService} from '../../service/user.service';
-import {Subject} from 'rxjs';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {WsServiceService} from '../../service/ws-service.service';
+import {AlertService} from '../../service/alert.service';
 
 @Component({
   selector: 'app-item-detail',
@@ -29,6 +29,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
   ws: any;
 
   constructor(
+    public alertService: AlertService,
     public wsService: WsServiceService,
     public userService: UserService,
     public fileService: FileService,
@@ -39,6 +40,7 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.wsService.closeWebSocketConnection();
+    this.ws = null;
   }
 
   ngOnInit(): void {
@@ -55,6 +57,8 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
         this.initBidForm();
 
         this.connectToWsBroadcast();
+      }, () => {
+        this.router.navigate(['/']);
       });
     });
   }
@@ -95,18 +99,8 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
       this.ws.subscribe('/ws-item/highest-bid', (message) => {
 
         const body = JSON.parse(message.body).body;
-
-        if (body && body.itemHighestBidDto && body.state) {
-          this.currentPrice = body?.itemHighestBidDto?.amount;
-          this.item.itemHighestBid = {
-            itemId: body?.itemHighestBidDto?.itemId,
-            amount: body?.itemHighestBidDto?.amount,
-            time: body?.itemHighestBidDto?.time,
-            userId: body?.itemHighestBidDto?.userId,
-          };
-
-          this.bidForm.patchValue({amount: this.getLowestPossibleBid()});
-          this.item.state =  body?.itemState;
+        if (body && body.itemId && body.itemId == this.itemId) {
+          this.processItemWsUpdate(body);
         }
       });
     }, (error) => {
@@ -114,8 +108,37 @@ export class ItemDetailComponent implements OnInit, OnDestroy {
       this.ws = null;
     });
   }
-}
 
+  private processItemWsUpdate(body: any): void {
+    if (body.state && body.state === 'SUCCESS') {
+      if (body.itemState) {
+        this.item.state = body.itemState;
+      }
+
+      if (body.itemHighestBid) {
+        this.item.itemHighestBid = {
+          itemId: body.itemHighestBid?.itemId,
+          amount: body.itemHighestBid?.amount,
+          time: body.itemHighestBid?.time,
+          userId: body.itemHighestBid?.userId,
+        };
+        this.currentPrice = body.itemHighestBid?.amount;
+
+        this.bidForm.patchValue({amount: this.getLowestPossibleBid()});
+      }
+
+      if (body.userRequestId === this.loggedUser.id && body.message) {
+        this.alertService.success(body.message);
+      }
+    }
+
+    if (body.state && body.state === 'ERROR') {
+      if (body.userRequestId === this.loggedUser.id && body.message) {
+        this.alertService.error(body.message);
+      }
+    }
+  }
+}
 
 export interface ItemWsBidRequest {
   userJwtToken: string;

@@ -19,13 +19,36 @@ export class CustomHttpInterceptor implements HttpInterceptor {
     const loggedUser = this.tokenStorageService.getLoggedUser();
 
     if (loggedUser != null) {
-      authReq = req.clone({ headers: req.headers.set(AUTH_HEADER_NAME, loggedUser.type + ' ' + loggedUser.token) });
+      authReq = req.clone({headers: req.headers.set(AUTH_HEADER_NAME, loggedUser.type + ' ' + loggedUser.token)});
     }
 
     return next.handle(authReq).pipe(
       tap(x => x, e => {
         console.error(e);
-        this.alertService.error('V aplikaci nastala chyba ' + e.status );
+
+        if (e.error && e.error.messages && e.error.messages.length > 0) {
+          const messages: ErrorMessage[] = e.error.messages;
+
+          messages.forEach(item => {
+            if (item.value && item.messageType) {
+              switch (item.messageType) {
+                case 'SUCCESS':
+                  this.alertService.success(item.value);
+                  break;
+                case 'INFO':
+                  this.alertService.info(item.value);
+                  break;
+                case 'WARNING':
+                  this.alertService.warn(item.value);
+                  break;
+                case 'ERROR':
+                default:
+                  this.alertService.error(item.value);
+              }
+            }
+          });
+        }
+
         return EMPTY;
       })
     );
@@ -33,5 +56,10 @@ export class CustomHttpInterceptor implements HttpInterceptor {
 }
 
 export const authInterceptorProviders = [
-  { provide: HTTP_INTERCEPTORS, useClass: CustomHttpInterceptor, multi: true }
+  {provide: HTTP_INTERCEPTORS, useClass: CustomHttpInterceptor, multi: true}
 ];
+
+export interface ErrorMessage {
+  messageType?: 'ERROR' | 'WARNING' | 'SUCCESS' | 'INFO';
+  value?: string;
+}

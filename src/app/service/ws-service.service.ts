@@ -13,9 +13,6 @@ export class WsServiceService {
 
   getWebSocket(): void {
 
-    if (this.ws) {
-      return this.ws;
-    }
     const socket = new WebSocket('ws://localhost:8090/ws');
     return this.ws = Stomp.over(socket);
   }

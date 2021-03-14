@@ -62,8 +62,6 @@ export class ChangePasswordComponent implements OnInit, OnDestroy {
       .pipe(finalize(() => this.changePasswordFormSubmitting = false))
       .subscribe(() => {
         this.alertService.success('Heslo bylo úspěšně změněno');
-      }, () => {
-        this.alertService.error('Nebylo možné změnit heslo');
       });
   }
 

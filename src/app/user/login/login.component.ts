@@ -59,9 +59,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       .subscribe(() => {
           this.alertService.success('Přihlášení proběhlo úspěšně');
           this.router.navigate(['/']);
-        },
-        (err: any) => {
-          this.alertService.error('Přihlášení selhalo');
         });
   }
 }

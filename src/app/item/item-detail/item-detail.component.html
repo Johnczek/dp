@@ -74,7 +74,7 @@
                             </form>
                           </div>
                           <div class="div mb-3" *ngIf="item?.itemHighestBid?.userId == this.loggedUser?.id">
-                            <strong class="text-success d-block text-center">Vyhráváte!</strong>
+                            <strong class="text-success d-block text-center" *ngIf="item.state === 'ACTIVE'">Vyhráváte!</strong>
                           </div>
                         </div>
                       </div>
@@ -85,6 +85,7 @@
                             Je nám líto, ale tato aukce již <strong>není aktivní</strong>. Prohlédněte si <a
                             routerLink="/item">jiné aukce</a>.
                           </div>
+                          <strong class="text-success d-block text-center" *ngIf="item.state !== 'ACTIVE' && item?.itemHighestBid?.userId == this.loggedUser?.id">Gratuluji, vyhrál(a) jste!</strong>
                         </div>
                       </ng-template>
 
