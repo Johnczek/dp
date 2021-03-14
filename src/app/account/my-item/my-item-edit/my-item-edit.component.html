@@ -1,6 +1,7 @@
 <div class="row" *ngIf="this.item">
   <div class="col-12">
-    <h4 class="mb-3">Úprava aukce {{item?.name}}</h4>
+    <h4 class="mb-1">Úprava aukce {{item?.name}}</h4>
+    <small class="mb-3"><a [routerLink]="['/item', item.id]">Zobrazit detail nabídky</a></small>
   </div>
 
   <div class="col-12 mt-4"
