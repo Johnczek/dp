@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  dp-fe:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    networks:
+      - dp-api_api_network
+    volumes:
+      - dp-fe_volume
+
+volumes:
+  dp-fe_volume:
+
+networks:
+  dp-api_api_network:
+    external: true

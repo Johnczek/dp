@@ -2,13 +2,13 @@
   <div class="d-flex align-items-baseline me-auto">
     <a class="h4 my-0 fw-normal text-dark text-decoration-none" routerLink="">Auctioner</a>
     <nav class="ms-md-3 ms-1 d-flex">
-      <a class="px-2 nav-link" routerLink="/item">Aukce</a>
+      <a id="header-auctions" class="px-2 nav-link" routerLink="/item">Aukce</a>
     </nav>
   </div>
 
   <div *ngIf="!isLoggedIn; else loggedInHeaderMenu" class="d-flex">
-    <a class="btn btn-sm btn-outline-primary me-2" routerLink="/login">Přihlášení</a>
-    <a class="btn btn-sm btn-success d-none d-sm-block" routerLink="/register">Registrace</a>
+    <a class="btn btn-sm btn-outline-primary me-2" routerLink="/login" id="header-login-button">Přihlášení</a>
+    <a class="btn btn-sm btn-success d-none d-sm-block" routerLink="/register" id="header-register-button">Registrace</a>
   </div>
   <ng-template #loggedInHeaderMenu>
     <ul class="list-unstyled m-0">
