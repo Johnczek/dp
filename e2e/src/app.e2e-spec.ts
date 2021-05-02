@@ -66,7 +66,7 @@ describe('Auctions page', () => {
     auctionsPage = new AuctionsPagePo();
   });
 
-  it('Should display auctions', async () => {
+  it('Should display auctions header', async () => {
     await auctionsPage.navigateTo();
     expect(await auctionsPage.getTitleText()).toEqual('Aktuálně běžící aukce');
   });

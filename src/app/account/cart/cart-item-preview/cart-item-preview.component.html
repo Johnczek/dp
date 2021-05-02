@@ -10,7 +10,7 @@
                                                  class="text-decoration-none">{{cartItem.seller.firstName}} {{cartItem.seller.lastName|slice:0:1}}</a>
         </small>
       </div>
-      <div class="col-6 col-sm-3 col-md-4 d-flex align-items-center flex-wrap mb-md-0 mb-sm-3 mb-0">
+      <div class="col-6 col-sm-3 col-md-4 d-flex align-items-center justify-content-center flex-wrap mb-md-0 mb-sm-3 mb-0">
         <h5 class="m-0 w-100 text-center">{{cartItem.itemHighestBid.amount}} kč</h5>
         <small class="text-muted text-center" *ngIf="(cartItem.delivery?.price + cartItem.payment?.price) > 0">
           (+ {{cartItem.delivery?.price + cartItem.payment?.price}} kč)</small>
